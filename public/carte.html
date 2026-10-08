@@ -4,9 +4,9 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Cocktail House — Bar à Cocktails Artisanal & Haute Mixologie</title>
+  <title>Cocktail House — Collection Complète des 35 Cocktails d'Auteur</title>
   <meta name="description"
-    content="Bar à cocktails artisanal d'exception : découvrez 35 nectars d'auteur au tarif unique de 200 FCFA. Préparation minute et livraison scellée à température idéale. Paiement sécurisé FedaPay.">
+    content="Découvrez l'intégralité de nos 35 nectars d'auteur au tarif unique de 200 FCFA : signatures fumées, accords botaniques, mocktails purs et infusions nobles.">
 
   <!-- Polices Google Fonts : Playfair Display & Plus Jakarta Sans -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -221,11 +221,6 @@
     0.04em; cursor: pointer; display: flex; align-items: center; justify-content: space-between; transition: all
     var(--transition-fast); min-height: 42px; } .cocktail-card:hover .cocktail-card-btn { background: var(--accent);
     border-color: var(--accent); color: #0A0908; }
-    .view-all-cocktails-wrap { margin-top: 48px; text-align: center; padding: 36px 24px; background: var(--bg-card);
-    border: 1px solid var(--border-gold); border-radius: var(--radius-sm); display: flex; flex-direction: column;
-    align-items: center; gap: 14px; backdrop-filter: blur(14px); }
-    .view-all-desc { font-size: 0.94rem; color: var(--text-muted); max-width: 580px; line-height: 1.6; }
-    .btn-view-all { padding: 13px 30px; font-size: 0.9rem; letter-spacing: 0.05em; gap: 10px; }
     /*==========================================================================SECTION NOS
     BARMEN==========================================================================*/ .section-barmen { padding: 100px
     0; position: relative; } .barmen-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
@@ -342,6 +337,9 @@
         </nav>
 
         <div class="header-actions">
+          <a href="/" class="btn btn-outline" style="min-height: 36px; padding: 6px 14px; font-size: 0.8rem; border-color: rgba(201, 169, 97, 0.4);">
+            ← Retour Accueil
+          </a>
           <button type="button" class="btn btn-gold header-cta-btn" id="open-order-btn"
             aria-label="Commander un cocktail">
             <span>Commander</span>
@@ -418,15 +416,16 @@
       </div>
     </section>
 
-    <!-- Carte des Cocktails Sélection d'Auteur -->
+    <!-- Carte des 35 Cocktails -->
     <section class="section-cocktails" id="cocktails">
       <div class="section-header">
         <div class="badge-gold">
-          <span>Sélection d&apos;Auteur</span>
+          <span>Collection Intégrale</span>
         </div>
-        <h2 class="section-title">Créations Emblématiques</h2>
+        <h2 class="section-title">Nuancier des 35 Créations</h2>
         <p class="section-desc">
-          Une sélection raffinée de nos créations les plus demandées. Survolez chaque élixir pour en ressentir le halo lumineux, ou ouvrez la collection complète des 35 recettes dans un nouvel onglet. Tarif unique de 200 FCFA.
+          Survolez ou touchez chaque cocktail pour voir la page s&apos;imprégner de sa texture liquide et de son spectre
+          chromatique. Tarif unique de 200 FCFA par création.
         </p>
       </div>
 
@@ -448,20 +447,9 @@
         </div>
       </div>
 
-      <!-- Grille des Cartes de cocktails (Sélection d'accueil) -->
+      <!-- Grille des 35 Cartes de cocktails -->
       <div class="cocktails-grid" id="cocktails-grid" role="list">
         <!-- Rendu dynamique par JS à partir du catalogue officiel -->
-      </div>
-
-      <!-- Redirection vers l'onglet de la carte complète -->
-      <div class="view-all-cocktails-wrap">
-        <p class="view-all-desc">
-          Envie d&apos;explorer nos 35 recettes d&apos;auteur, mocktails botaniques et élixirs fumés ?
-        </p>
-        <a href="carte.html" target="_blank" rel="noopener noreferrer" class="btn btn-gold btn-view-all" id="btn-open-full-menu">
-          <span>Découvrir toute la Carte dans un nouvel onglet (35 Créations)</span>
-          <span style="font-size: 1.15rem; line-height: 1;">↗</span>
-        </a>
       </div>
     </section>
 
@@ -1282,11 +1270,7 @@
       const availability = JSON.parse(localStorage.getItem("cocktail_availability_status") || "{}");
       const customPrices = JSON.parse(localStorage.getItem("cocktail_custom_prices") || "{}");
 
-      // Sur la page d'accueil, présentation limitée aux 6 créations emblématiques
-      const HOMEPAGE_LIMIT = 6;
-      const displayed = (currentFilter === "tous" && !searchClean) ? filtered.slice(0, HOMEPAGE_LIMIT) : filtered;
-
-      grid.innerHTML = displayed.map((c, index) => {
+      grid.innerHTML = filtered.map((c, index) => {
         const theme = getCocktailFlavorTheme(c);
         const isSoldOut = availability[c.name] === false;
         const currentPrice = customPrices[c.name] || c.price;

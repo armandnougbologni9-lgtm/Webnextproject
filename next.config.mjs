@@ -16,6 +16,10 @@ const nextConfig = {
           source: '/',
           destination: '/index.html',
         },
+        {
+          source: '/carte',
+          destination: '/carte.html',
+        },
       ],
     };
   },
