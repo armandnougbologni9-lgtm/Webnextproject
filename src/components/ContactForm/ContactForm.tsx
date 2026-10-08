@@ -48,6 +48,27 @@ export const ContactForm: React.FC = () => {
   const [errors, setErrors] = useState<FormErrors>({});
   const [isLoading, setIsLoading] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
+  const [todayString, setTodayString] = useState('');
+
+  React.useEffect(() => {
+    // Calcul de la date du jour au format YYYY-MM-DD
+    const today = new Date().toISOString().split('T')[0];
+    setTodayString(today);
+
+    // Écouter l'événement personnalisé de sélection d'un cocktail
+    const handleCocktailSelect = (e: Event) => {
+      const customEvent = e as CustomEvent<string>;
+      if (customEvent.detail) {
+        setFormData((prev) => ({
+          ...prev,
+          cocktail: customEvent.detail,
+        }));
+      }
+    };
+
+    window.addEventListener('selectCocktail', handleCocktailSelect);
+    return () => window.removeEventListener('selectCocktail', handleCocktailSelect);
+  }, []);
 
   const validate = (): boolean => {
     const newErrors: FormErrors = {};
@@ -333,6 +354,7 @@ export const ContactForm: React.FC = () => {
                       type="date"
                       id="date"
                       name="date"
+                      min={todayString}
                       value={formData.date}
                       onChange={handleChange}
                       className={`${styles.input} ${errors.date ? styles.inputError : ''}`}

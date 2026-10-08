@@ -10,7 +10,10 @@ interface CocktailCardProps {
 }
 
 export const CocktailCard: React.FC<CocktailCardProps> = ({ cocktail, onSelect }) => {
-  const handleClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
+  const handleClick = () => {
+    if (typeof window !== 'undefined') {
+      window.dispatchEvent(new CustomEvent('selectCocktail', { detail: cocktail.name }));
+    }
     if (onSelect) {
       onSelect(cocktail.name);
     }
