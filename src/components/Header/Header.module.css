@@ -45,6 +45,12 @@
   margin: 0 auto;
 }
 
+.logoLink {
+  text-decoration: none;
+  display: flex;
+  align-items: center;
+}
+
 .logo {
   display: flex;
   align-items: center;

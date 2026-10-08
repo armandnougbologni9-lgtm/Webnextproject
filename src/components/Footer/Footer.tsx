@@ -1,6 +1,7 @@
 import React from 'react';
 import Link from 'next/link';
-import { Wine, MapPin, Phone, Mail, Clock } from 'lucide-react';
+import { MapPin, Phone, Mail, Clock } from 'lucide-react';
+import Logo from '@/components/Logo/Logo';
 import styles from './Footer.module.css';
 
 export const Footer: React.FC = () => {
@@ -12,14 +13,8 @@ export const Footer: React.FC = () => {
         <div className={styles.topGrid}>
           {/* Logo & Présentation */}
           <div className={styles.brandCol}>
-            <Link href="#accueil" className={styles.logo}>
-              <div className={styles.logoIcon}>
-                <Wine size={20} />
-              </div>
-              <div>
-                <span className={styles.logoTitle}>Cocktail House</span>
-                <span className={styles.logoSub}>Mixologie d'Exception</span>
-              </div>
+            <Link href="#accueil" className={styles.logoLink} aria-label="Retour en haut Cocktail House">
+              <Logo variant="footer" />
             </Link>
 
             <p className={styles.presentation}>
@@ -79,6 +74,11 @@ export const Footer: React.FC = () => {
               <li>
                 <a href="/#cocktails" className={styles.link}>
                   Nos Cocktails
+                </a>
+              </li>
+              <li>
+                <a href="/#barmen" className={styles.link}>
+                  Nos Barmen & Mixologues
                 </a>
               </li>
               <li>

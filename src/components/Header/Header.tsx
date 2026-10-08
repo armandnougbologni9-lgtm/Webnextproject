@@ -2,7 +2,8 @@
 
 import React, { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
-import { Wine, Menu, X, ArrowRight } from 'lucide-react';
+import { Menu, X, ArrowRight } from 'lucide-react';
+import Logo from '@/components/Logo/Logo';
 import styles from './Header.module.css';
 
 interface NavItem {
@@ -13,6 +14,7 @@ interface NavItem {
 const NAV_ITEMS: NavItem[] = [
   { label: 'Accueil', href: '/#accueil' },
   { label: 'Cocktails', href: '/#cocktails' },
+  { label: 'Nos Barmen', href: '/#barmen' },
   { label: 'Événements', href: '/#evenements' },
   { label: 'À propos', href: '/#a-propos' },
   { label: 'Témoignages', href: '/#temoignages' },
@@ -86,19 +88,14 @@ export const Header: React.FC = () => {
       </a>
 
       <div className={styles.inner}>
-        {/* Logo */}
+        {/* Logo d'exception */}
         <Link
           href="#accueil"
-          className={styles.logo}
+          className={styles.logoLink}
           onClick={(e) => handleNavClick(e, '#accueil')}
+          aria-label="Retour à l'accueil Cocktail House"
         >
-          <div className={styles.logoIcon}>
-            <Wine size={22} strokeWidth={2.2} />
-          </div>
-          <div className={styles.logoText}>
-            <span className={styles.logoTitle}>Cocktail House</span>
-            <span className={styles.logoSub}>Mixologie d'Exception</span>
-          </div>
+          <Logo variant="header" />
         </Link>
 
         {/* Navigation Desktop */}

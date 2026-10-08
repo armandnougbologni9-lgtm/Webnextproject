@@ -22,6 +22,7 @@ import {
   ExternalLink,
 } from 'lucide-react';
 import { COCKTAILS, Cocktail } from '@/data/cocktails';
+import Logo from '@/components/Logo/Logo';
 import styles from './commander.module.css';
 
 const FEDAPAY_PAYMENT_URL = 'https://me.fedapay.com/MjEZRb7k';
@@ -178,11 +179,14 @@ function CommanderContent() {
       <div className={styles.ambientGlow} aria-hidden="true" />
 
       <div className="container">
-        {/* Barre de retour */}
+        {/* Barre de retour & Logo */}
         <div className={styles.topBar}>
           <Link href="/" className={styles.backLink}>
             <ArrowLeft size={18} />
-            <span>Retour à l&apos;accueil & nos cocktails</span>
+            <span>Retour à l&apos;accueil</span>
+          </Link>
+          <Link href="/" style={{ textDecoration: 'none' }}>
+            <Logo variant="header" showSubtitle={false} />
           </Link>
         </div>
 

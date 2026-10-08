@@ -1,6 +1,7 @@
 import React from 'react';
 import Link from 'next/link';
 import { CheckCircle2, Truck, Banknote, PhoneCall, ArrowRight, Home } from 'lucide-react';
+import Logo from '@/components/Logo/Logo';
 import styles from './confirmation.module.css';
 
 export const metadata = {
@@ -14,6 +15,10 @@ export default function ConfirmationLivraisonPage() {
       <div className={styles.glow} aria-hidden="true" />
 
       <div className={styles.card}>
+        <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '24px' }}>
+          <Logo variant="header" />
+        </div>
+
         <div className={styles.iconWrapper}>
           <CheckCircle2 size={44} />
         </div>
