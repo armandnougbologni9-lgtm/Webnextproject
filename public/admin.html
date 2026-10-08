@@ -1,0 +1,1661 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Cocktail House — Espace Barman (Admin)</title>
+  <meta name="robots" content="noindex, nofollow">
+
+  <!-- Polices Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
+
+  <style>
+    /* ==========================================================================
+       DESIGN SYSTEM ERGONOMIQUE MOBILE-FIRST (USAGE À UNE MAIN)
+       ========================================================================== */
+    :root {
+      --bg-dark: #0A0D14;
+      --bg-surface: #121722;
+      --bg-card: #182030;
+      --bg-input: #1F2A3E;
+
+      --text-white: #FFFFFF;
+      --text-muted: #9AA3B8;
+      --text-dim: #657088;
+
+      --gold: #D4AF37;
+      --gold-light: #F6DF89;
+
+      /* Statuts Commandes */
+      --status-new: #EF4444;       /* Rouge vif */
+      --status-prep: #F59E0B;      /* Ambre / Orange */
+      --status-shipping: #06B6D4;  /* Cyan / En route */
+      --status-done: #10B981;      /* Vert émeraude */
+
+      --radius-sm: 8px;
+      --radius-md: 14px;
+      --radius-lg: 20px;
+      --radius-full: 9999px;
+
+      --shadow-card: 0 4px 20px rgba(0, 0, 0, 0.4);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      -webkit-tap-highlight-color: transparent;
+      user-select: none;
+    }
+
+    input, textarea, select {
+      user-select: auto;
+    }
+
+    body {
+      font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+      background-color: var(--bg-dark);
+      color: var(--text-white);
+      line-height: 1.5;
+      padding-bottom: 90px; /* Espace pour la barre de navigation basse */
+      min-height: 100vh;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* ==========================================================================
+       ÉCRAN DE VERROUILLAGE (CODE PIN À UNE MAIN)
+       ========================================================================== */
+    .lock-screen {
+      position: fixed;
+      inset: 0;
+      background: #07090F;
+      z-index: 9999;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+      transition: opacity 0.3s ease, visibility 0.3s ease;
+    }
+
+    .lock-screen.unlocked {
+      opacity: 0;
+      visibility: hidden;
+      pointer-events: none;
+    }
+
+    .lock-header {
+      text-align: center;
+      margin-bottom: 32px;
+    }
+
+    .lock-emblem {
+      width: 64px;
+      height: 64px;
+      border-radius: 50%;
+      background: radial-gradient(circle at 35% 35%, #FFF0BA, #D4AF37 60%, #8C650A);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 16px;
+      box-shadow: 0 0 24px rgba(212, 175, 55, 0.4);
+    }
+
+    .lock-title {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.6rem;
+      color: #FFFFFF;
+      margin-bottom: 6px;
+    }
+
+    .lock-subtitle {
+      font-size: 0.88rem;
+      color: var(--text-muted);
+    }
+
+    .pin-dots {
+      display: flex;
+      gap: 16px;
+      margin-bottom: 36px;
+    }
+
+    .pin-dot {
+      width: 16px;
+      height: 16px;
+      border-radius: 50%;
+      border: 2px solid var(--gold);
+      background: transparent;
+      transition: all 0.2s ease;
+    }
+
+    .pin-dot.filled {
+      background: var(--gold);
+      box-shadow: 0 0 12px var(--gold);
+      transform: scale(1.15);
+    }
+
+    /* Pavé numérique tactile à une main */
+    .pin-keypad {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px;
+      width: 100%;
+      max-width: 320px;
+    }
+
+    .pin-btn {
+      height: 68px;
+      border-radius: var(--radius-lg);
+      background: rgba(255, 255, 255, 0.06);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      color: #FFFFFF;
+      font-size: 1.6rem;
+      font-weight: 700;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: background 0.15s, transform 0.1s;
+    }
+
+    .pin-btn:active {
+      background: var(--gold);
+      color: #000000;
+      transform: scale(0.94);
+    }
+
+    .pin-btn.action {
+      font-size: 1.1rem;
+      background: transparent;
+      border-color: transparent;
+      color: var(--text-muted);
+    }
+
+    .pin-error-msg {
+      margin-top: 20px;
+      color: var(--status-new);
+      font-size: 0.88rem;
+      font-weight: 600;
+      min-height: 20px;
+    }
+
+    /* ==========================================================================
+       EN-TÊTE PRINCIPAL DE L'ESPACE BARMAN
+       ========================================================================== */
+    .admin-topbar {
+      position: sticky;
+      top: 0;
+      z-index: 40;
+      background: rgba(14, 18, 28, 0.94);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+      padding: 14px 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .admin-branding {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .admin-title {
+      font-size: 1.15rem;
+      font-weight: 800;
+      letter-spacing: -0.01em;
+      color: #FFFFFF;
+    }
+
+    .admin-badge-live {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: rgba(16, 185, 129, 0.15);
+      border: 1px solid rgba(16, 185, 129, 0.4);
+      padding: 3px 9px;
+      border-radius: var(--radius-full);
+      font-size: 0.72rem;
+      font-weight: 700;
+      color: #34D399;
+    }
+
+    .pulse-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: #10B981;
+      animation: pulseAnim 1.8s infinite;
+    }
+
+    @keyframes pulseAnim {
+      0% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.3; transform: scale(0.7); }
+      100% { opacity: 1; transform: scale(1); }
+    }
+
+    .topbar-actions {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .audio-toggle-btn {
+      background: rgba(255, 255, 255, 0.06);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      width: 44px;
+      height: 44px;
+      border-radius: var(--radius-full);
+      color: var(--text-white);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      font-size: 1.2rem;
+    }
+
+    .audio-toggle-btn.muted {
+      color: var(--text-dim);
+      border-color: rgba(239, 68, 68, 0.3);
+      background: rgba(239, 68, 68, 0.08);
+    }
+
+    /* Pastille de notification animée */
+    .notif-pill {
+      background: var(--status-new);
+      color: #FFFFFF;
+      padding: 6px 12px;
+      border-radius: var(--radius-full);
+      font-size: 0.8rem;
+      font-weight: 800;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      animation: bouncePill 1.2s infinite;
+      cursor: pointer;
+    }
+
+    @keyframes bouncePill {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-3px); }
+    }
+
+    /* ==========================================================================
+       CONTENEUR DE VUES (TABS)
+       ========================================================================== */
+    .admin-container {
+      max-width: 760px;
+      margin: 0 auto;
+      padding: 16px;
+    }
+
+    .view-section {
+      display: none;
+    }
+
+    .view-section.active {
+      display: block;
+      animation: fadeIn 0.25s ease;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(6px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* ==========================================================================
+       VUE 1 : COMMANDES
+       ========================================================================== */
+    .filters-bar {
+      display: flex;
+      gap: 8px;
+      overflow-x: auto;
+      padding-bottom: 12px;
+      margin-bottom: 16px;
+      scrollbar-width: none;
+    }
+
+    .filters-bar::-webkit-scrollbar {
+      display: none;
+    }
+
+    .filter-btn {
+      padding: 10px 18px;
+      border-radius: var(--radius-full);
+      background: var(--bg-surface);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      color: var(--text-muted);
+      font-size: 0.88rem;
+      font-weight: 700;
+      white-space: nowrap;
+      cursor: pointer;
+      min-height: 44px;
+      transition: all 0.2s;
+    }
+
+    .filter-btn.active {
+      background: var(--gold);
+      color: #000000;
+      border-color: var(--gold);
+      box-shadow: 0 2px 12px rgba(212, 175, 55, 0.35);
+    }
+
+    /* Carte de commande pour smartphone */
+    .order-card {
+      background: var(--bg-card);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: var(--radius-lg);
+      padding: 20px;
+      margin-bottom: 18px;
+      box-shadow: var(--shadow-card);
+      position: relative;
+      border-left: 6px solid var(--status-new);
+      transition: transform 0.2s ease, border-color 0.2s;
+    }
+
+    .order-card.status-Nouvelle {
+      border-left-color: var(--status-new);
+    }
+    .order-card.status-En-preparation {
+      border-left-color: var(--status-prep);
+    }
+    .order-card.status-En-livraison {
+      border-left-color: var(--status-shipping);
+    }
+    .order-card.status-Livree {
+      border-left-color: var(--status-done);
+      opacity: 0.78;
+    }
+
+    .order-card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 12px;
+      gap: 8px;
+    }
+
+    .order-num-time {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .order-num {
+      font-size: 1.15rem;
+      font-weight: 800;
+      color: #FFFFFF;
+    }
+
+    .order-time {
+      font-size: 0.78rem;
+      color: var(--text-dim);
+    }
+
+    /* Sélecteur de statut séquentiel tactile en un clic */
+    .status-badge-btn {
+      padding: 8px 16px;
+      border-radius: var(--radius-full);
+      font-size: 0.84rem;
+      font-weight: 800;
+      border: none;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      min-height: 40px;
+      transition: transform 0.1s;
+    }
+
+    .status-badge-btn:active {
+      transform: scale(0.95);
+    }
+
+    .badge-Nouvelle {
+      background: rgba(239, 68, 68, 0.2);
+      color: #F87171;
+      border: 1px solid var(--status-new);
+    }
+
+    .badge-En-preparation {
+      background: rgba(245, 158, 11, 0.2);
+      color: #FBBF24;
+      border: 1px solid var(--status-prep);
+    }
+
+    .badge-En-livraison {
+      background: rgba(6, 182, 212, 0.2);
+      color: #38BDF8;
+      border: 1px solid var(--status-shipping);
+    }
+
+    .badge-Livree {
+      background: rgba(16, 185, 129, 0.2);
+      color: #34D399;
+      border: 1px solid var(--status-done);
+    }
+
+    /* Infos Client */
+    .order-client-block {
+      background: rgba(0, 0, 0, 0.25);
+      border-radius: var(--radius-md);
+      padding: 12px 14px;
+      margin-bottom: 14px;
+    }
+
+    .client-name {
+      font-size: 1.05rem;
+      font-weight: 700;
+      color: #FFFFFF;
+      margin-bottom: 4px;
+    }
+
+    .client-address {
+      font-size: 0.86rem;
+      color: var(--text-muted);
+      line-height: 1.4;
+      display: flex;
+      align-items: flex-start;
+      gap: 6px;
+    }
+
+    /* Cocktails commandés */
+    .order-items-list {
+      list-style: none;
+      margin-bottom: 14px;
+      padding-left: 2px;
+    }
+
+    .order-item-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 7px 0;
+      border-bottom: 1px dashed rgba(255, 255, 255, 0.08);
+      font-size: 0.92rem;
+    }
+
+    .order-item-row:last-child {
+      border-bottom: none;
+    }
+
+    .item-qty-name {
+      font-weight: 600;
+      color: #FFFFFF;
+    }
+
+    .item-qty-badge {
+      display: inline-block;
+      background: var(--gold);
+      color: #000;
+      font-weight: 800;
+      padding: 2px 7px;
+      border-radius: var(--radius-full);
+      font-size: 0.78rem;
+      margin-right: 8px;
+    }
+
+    /* Ligne totale & paiement FedaPay */
+    .order-footer-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding-top: 10px;
+      margin-bottom: 16px;
+    }
+
+    .order-total-price {
+      font-size: 1.25rem;
+      font-weight: 800;
+      color: var(--gold);
+    }
+
+    .fedapay-status-tag {
+      font-size: 0.75rem;
+      font-weight: 700;
+      padding: 4px 10px;
+      border-radius: var(--radius-full);
+      background: rgba(16, 185, 129, 0.15);
+      color: #34D399;
+      border: 1px solid rgba(16, 185, 129, 0.35);
+    }
+
+    /* Gros boutons d'actions tactiles à une main (Appeler / WhatsApp) */
+    .order-actions-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+
+    .btn-action-touch {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 13px;
+      border-radius: var(--radius-md);
+      font-size: 0.95rem;
+      font-weight: 700;
+      text-decoration: none;
+      cursor: pointer;
+      min-height: 48px;
+      border: none;
+      transition: opacity 0.15s, transform 0.1s;
+    }
+
+    .btn-action-touch:active {
+      transform: scale(0.96);
+    }
+
+    .btn-call {
+      background: #2563EB;
+      color: #FFFFFF;
+    }
+
+    .btn-whatsapp {
+      background: #16A34A;
+      color: #FFFFFF;
+    }
+
+    /* ==========================================================================
+       VUE 2 : DEMANDES DE DEVIS ÉVÉNEMENTIEL
+       ========================================================================== */
+    .quote-card {
+      background: var(--bg-card);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: var(--radius-lg);
+      padding: 20px;
+      margin-bottom: 18px;
+      box-shadow: var(--shadow-card);
+    }
+
+    .quote-header {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 14px;
+    }
+
+    .quote-event-type {
+      font-size: 1.15rem;
+      font-weight: 800;
+      color: var(--gold);
+    }
+
+    .quote-meta-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+      background: rgba(0, 0, 0, 0.25);
+      border-radius: var(--radius-md);
+      padding: 12px;
+      margin-bottom: 14px;
+      font-size: 0.85rem;
+    }
+
+    .quote-message-box {
+      font-size: 0.88rem;
+      color: #D3D8E6;
+      font-style: italic;
+      background: rgba(255, 255, 255, 0.03);
+      padding: 12px;
+      border-radius: var(--radius-md);
+      margin-bottom: 16px;
+      border-left: 3px solid var(--gold);
+    }
+
+    .quote-status-select {
+      width: 100%;
+      padding: 12px;
+      border-radius: var(--radius-md);
+      background: var(--bg-input);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      color: #FFFFFF;
+      font-size: 0.92rem;
+      font-weight: 700;
+      margin-bottom: 14px;
+    }
+
+    /* ==========================================================================
+       VUE 3 : CARTE DES 35 COCKTAILS (DISPO / ÉPUISÉ & PRIX)
+       ========================================================================== */
+    .cocktails-manage-list {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .cocktail-manage-row {
+      background: var(--bg-card);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: var(--radius-md);
+      padding: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 14px;
+      transition: opacity 0.2s, border-color 0.2s;
+    }
+
+    .cocktail-manage-row.sold-out {
+      opacity: 0.55;
+      border-color: rgba(239, 68, 68, 0.4);
+      background: rgba(239, 68, 68, 0.04);
+    }
+
+    .cocktail-manage-info {
+      flex: 1;
+    }
+
+    .cocktail-manage-name {
+      font-size: 1rem;
+      font-weight: 700;
+      color: #FFFFFF;
+      margin-bottom: 2px;
+    }
+
+    .cocktail-manage-sub {
+      font-size: 0.78rem;
+      color: var(--text-dim);
+    }
+
+    /* Contrôle de prix rapide */
+    .price-input-wrap {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      background: var(--bg-input);
+      border-radius: var(--radius-sm);
+      padding: 4px 8px;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .price-input {
+      width: 60px;
+      background: transparent;
+      border: none;
+      color: var(--gold);
+      font-weight: 800;
+      font-size: 0.95rem;
+      text-align: right;
+      outline: none;
+    }
+
+    .price-currency {
+      font-size: 0.75rem;
+      color: var(--text-dim);
+      font-weight: 700;
+    }
+
+    /* Interrupteur tactile ON / OFF (Disponible / Épuisé) */
+    .switch-wrap {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .toggle-switch {
+      position: relative;
+      display: inline-block;
+      width: 54px;
+      height: 32px;
+    }
+
+    .toggle-switch input {
+      opacity: 0;
+      width: 0;
+      height: 0;
+    }
+
+    .slider {
+      position: absolute;
+      cursor: pointer;
+      inset: 0;
+      background-color: #374151;
+      transition: 0.2s;
+      border-radius: var(--radius-full);
+    }
+
+    .slider:before {
+      position: absolute;
+      content: "";
+      height: 24px;
+      width: 24px;
+      left: 4px;
+      bottom: 4px;
+      background-color: white;
+      transition: 0.2s;
+      border-radius: 50%;
+    }
+
+    input:checked + .slider {
+      background-color: var(--status-done);
+    }
+
+    input:checked + .slider:before {
+      transform: translateX(22px);
+    }
+
+    /* ==========================================================================
+       VUE 4 : RÉGLAGES (CODE PIN, NOTIFICATIONS)
+       ========================================================================== */
+    .settings-card {
+      background: var(--bg-card);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: var(--radius-lg);
+      padding: 24px;
+      margin-bottom: 20px;
+    }
+
+    .settings-title {
+      font-size: 1.15rem;
+      font-weight: 800;
+      color: #FFFFFF;
+      margin-bottom: 14px;
+    }
+
+    .btn-full {
+      width: 100%;
+      padding: 14px;
+      border-radius: var(--radius-md);
+      font-size: 0.95rem;
+      font-weight: 700;
+      cursor: pointer;
+      min-height: 48px;
+      border: none;
+      margin-top: 10px;
+    }
+
+    /* ==========================================================================
+       BARRE DE NAVIGATION BASSE (BOTTOM TAB BAR TACTILE)
+       ========================================================================== */
+    .admin-bottom-nav {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: 74px;
+      background: rgba(14, 18, 28, 0.96);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border-top: 1px solid rgba(255, 255, 255, 0.1);
+      display: flex;
+      justify-content: space-around;
+      align-items: center;
+      z-index: 50;
+      padding: 0 10px;
+    }
+
+    .nav-tab-btn {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 4px;
+      background: transparent;
+      border: none;
+      color: var(--text-dim);
+      font-size: 0.72rem;
+      font-weight: 700;
+      cursor: pointer;
+      height: 100%;
+      position: relative;
+      transition: color 0.15s;
+    }
+
+    .nav-tab-btn.active {
+      color: var(--gold);
+    }
+
+    .nav-tab-icon {
+      font-size: 1.35rem;
+    }
+
+    .tab-badge {
+      position: absolute;
+      top: 10px;
+      right: 22%;
+      background: var(--status-new);
+      color: #FFFFFF;
+      font-size: 0.68rem;
+      font-weight: 800;
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    /* Toast temporaire */
+    .admin-toast {
+      position: fixed;
+      top: 80px;
+      left: 50%;
+      transform: translateX(-50%) translateY(-20px);
+      background: var(--gold);
+      color: #000;
+      padding: 10px 20px;
+      border-radius: var(--radius-full);
+      font-size: 0.88rem;
+      font-weight: 800;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+      opacity: 0;
+      pointer-events: none;
+      transition: all 0.25s ease;
+      z-index: 999;
+    }
+
+    .admin-toast.visible {
+      opacity: 1;
+      transform: translateX(-50%) translateY(0);
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ==========================================================================
+       ÉCRAN DE VERROUILLAGE SÉCURISÉ (PIN)
+       ========================================================================== -->
+  <div class="lock-screen" id="lock-screen">
+    <div class="lock-header">
+      <div class="lock-emblem">
+        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#000" stroke-width="2.5">
+          <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+          <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+        </svg>
+      </div>
+      <h1 class="lock-title">Espace Barman</h1>
+      <p class="lock-subtitle">Saisissez votre code PIN d&apos;accès</p>
+    </div>
+
+    <div class="pin-dots">
+      <div class="pin-dot" id="dot-1"></div>
+      <div class="pin-dot" id="dot-2"></div>
+      <div class="pin-dot" id="dot-3"></div>
+      <div class="pin-dot" id="dot-4"></div>
+    </div>
+
+    <!-- Clavier numérique 1-main -->
+    <div class="pin-keypad">
+      <button type="button" class="pin-btn" onclick="pressPin('1')">1</button>
+      <button type="button" class="pin-btn" onclick="pressPin('2')">2</button>
+      <button type="button" class="pin-btn" onclick="pressPin('3')">3</button>
+
+      <button type="button" class="pin-btn" onclick="pressPin('4')">4</button>
+      <button type="button" class="pin-btn" onclick="pressPin('5')">5</button>
+      <button type="button" class="pin-btn" onclick="pressPin('6')">6</button>
+
+      <button type="button" class="pin-btn" onclick="pressPin('7')">7</button>
+      <button type="button" class="pin-btn" onclick="pressPin('8')">8</button>
+      <button type="button" class="pin-btn" onclick="pressPin('9')">9</button>
+
+      <button type="button" class="pin-btn action" onclick="clearPin()">C</button>
+      <button type="button" class="pin-btn" onclick="pressPin('0')">0</button>
+      <button type="button" class="pin-btn action" onclick="deletePin()">⌫</button>
+    </div>
+
+    <div class="pin-error-msg" id="pin-error"></div>
+  </div>
+
+  <!-- ==========================================================================
+       BARRE SUPÉRIEURE (STATUS & SON)
+       ========================================================================== -->
+  <header class="admin-topbar">
+    <div class="admin-branding">
+      <span class="admin-title">Cocktail House</span>
+      <div class="admin-badge-live">
+        <span class="pulse-dot"></span>
+        <span>En Ligne</span>
+      </div>
+    </div>
+
+    <div class="topbar-actions">
+      <!-- Pastille alertes nouvelles commandes -->
+      <div class="notif-pill" id="new-orders-pill" onclick="switchTab('orders', 'A-preparer')" style="display: none;">
+        <span>🔔</span>
+        <span id="new-orders-count">0</span>
+      </div>
+
+      <!-- Interrupteur sonore de notification -->
+      <button type="button" class="audio-toggle-btn" id="audio-toggle-btn" onclick="toggleAudio()" title="Activer / Couper l'alerte sonore">
+        🔊
+      </button>
+    </div>
+  </header>
+
+  <!-- Toast de notification rapide -->
+  <div class="admin-toast" id="admin-toast">Action enregistrée</div>
+
+  <!-- ==========================================================================
+       CONTENU PRINCIPAL DES ONGLETS
+       ========================================================================== -->
+  <main class="admin-container">
+
+    <!-- ONGLET 1 : COMMANDES -->
+    <section class="view-section active" id="view-orders">
+      <!-- Filtres rapides -->
+      <div class="filters-bar" role="tablist">
+        <button type="button" class="filter-btn active" onclick="setOrderFilter('all', this)">Toutes (<span id="count-all">0</span>)</button>
+        <button type="button" class="filter-btn" onclick="setOrderFilter('today', this)">Aujourd&apos;hui (<span id="count-today">0</span>)</button>
+        <button type="button" class="filter-btn" onclick="setOrderFilter('A-preparer', this)">À Préparer (<span id="count-todo">0</span>)</button>
+        <button type="button" class="filter-btn" onclick="setOrderFilter('Livree', this)">Livrées (<span id="count-done">0</span>)</button>
+      </div>
+
+      <!-- Liste dynamique des commandes -->
+      <div id="orders-list">
+        <!-- Rendu JS -->
+      </div>
+    </section>
+
+    <!-- ONGLET 2 : DEMANDES DE DEVIS ÉVÉNEMENT -->
+    <section class="view-section" id="view-quotes">
+      <h2 style="font-size: 1.25rem; margin-bottom: 16px;">Demandes de Devis Événement</h2>
+      <div id="quotes-list">
+        <!-- Rendu JS -->
+      </div>
+    </section>
+
+    <!-- ONGLET 3 : GESTION DES 35 COCKTAILS (DISPO & PRIX) -->
+    <section class="view-section" id="view-menu">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+        <h2 style="font-size: 1.25rem;">Carte des 35 Cocktails</h2>
+        <span style="font-size: 0.8rem; color: var(--gold);" id="available-count-badge">35/35 dispos</span>
+      </div>
+
+      <div class="cocktails-manage-list" id="cocktails-manage-list">
+        <!-- Rendu JS des 35 cocktails avec switch et modif de prix -->
+      </div>
+    </section>
+
+    <!-- ONGLET 4 : RÉGLAGES & MAINTENANCE -->
+    <section class="view-section" id="view-settings">
+      <div class="settings-card">
+        <h3 class="settings-title">Sécurité & Code PIN</h3>
+        <p style="font-size: 0.88rem; color: var(--text-muted); margin-bottom: 14px;">
+          Code PIN actuel : <strong style="color: var(--gold);" id="current-pin-display">2026</strong>
+        </p>
+        <div style="display: flex; gap: 10px;">
+          <input type="text" id="new-pin-input" placeholder="Nouveau PIN (4 chiffres)" maxlength="4" style="flex: 1; padding: 12px; background: var(--bg-input); border: 1px solid rgba(255,255,255,0.1); border-radius: var(--radius-sm); color: #fff; font-size: 1rem; text-align: center;">
+          <button type="button" class="btn-action-touch" style="background: var(--gold); color: #000; padding: 0 20px;" onclick="updatePinCode()">Changer</button>
+        </div>
+      </div>
+
+      <div class="settings-card">
+        <h3 class="settings-title">Tester les Alertes & Synchronisation</h3>
+        <button type="button" class="btn-full" style="background: #2563EB; color: #fff;" onclick="playChimeSound(); showToast('Sonnette testée avec succès !');">
+          Tester la sonnerie d&apos;alerte sonore 🔔
+        </button>
+        <button type="button" class="btn-full" style="background: rgba(255,255,255,0.08); color: #fff; margin-top: 10px;" onclick="simulateNewOrder()">
+          + Simuler une nouvelle commande FedaPay
+        </button>
+      </div>
+
+      <div class="settings-card">
+        <h3 class="settings-title">Session Barman</h3>
+        <button type="button" class="btn-full" style="background: #DC2626; color: #fff;" onclick="lockScreen()">
+          Verrouiller l&apos;écran (Déconnexion)
+        </button>
+      </div>
+    </section>
+  </main>
+
+  <!-- ==========================================================================
+       BARRE DE NAVIGATION BASSE (BOTTOM TAB BAR)
+       ========================================================================== */
+  -->
+  <nav class="admin-bottom-nav">
+    <button type="button" class="nav-tab-btn active" id="tab-btn-orders" onclick="switchTab('orders')">
+      <span class="nav-tab-icon">📋</span>
+      <span>Commandes</span>
+      <span class="tab-badge" id="tab-orders-badge" style="display: none;">0</span>
+    </button>
+
+    <button type="button" class="nav-tab-btn" id="tab-btn-quotes" onclick="switchTab('quotes')">
+      <span class="nav-tab-icon">🥂</span>
+      <span>Devis</span>
+    </button>
+
+    <button type="button" class="nav-tab-btn" id="tab-btn-menu" onclick="switchTab('menu')">
+      <span class="nav-tab-icon">🍸</span>
+      <span>Carte</span>
+    </button>
+
+    <button type="button" class="nav-tab-btn" id="tab-btn-settings" onclick="switchTab('settings')">
+      <span class="nav-tab-icon">⚙️</span>
+      <span>Réglages</span>
+    </button>
+  </nav>
+
+  <!-- ==========================================================================
+       LOGIQUE JAVASCRIPT DE L'ESPACE BARMAN
+       ========================================================================== -->
+  <script>
+    // 1. GESTION DU CODE PIN & VERROUILLAGE
+    let currentInputPin = "";
+    let correctPin = localStorage.getItem("barman_pin_code") || "2026";
+    let isSoundEnabled = localStorage.getItem("barman_sound_enabled") !== "false";
+
+    function updatePinDots() {
+      for (let i = 1; i <= 4; i++) {
+        const dot = document.getElementById(`dot-${i}`);
+        if (i <= currentInputPin.length) {
+          dot.classList.add("filled");
+        } else {
+          dot.classList.remove("filled");
+        }
+      }
+    }
+
+    function pressPin(digit) {
+      if (currentInputPin.length < 4) {
+        currentInputPin += digit;
+        updatePinDots();
+        if (currentInputPin.length === 4) {
+          setTimeout(verifyPin, 100);
+        }
+      }
+    }
+
+    function clearPin() {
+      currentInputPin = "";
+      updatePinDots();
+      document.getElementById("pin-error").textContent = "";
+    }
+
+    function deletePin() {
+      currentInputPin = currentInputPin.slice(0, -1);
+      updatePinDots();
+      document.getElementById("pin-error").textContent = "";
+    }
+
+    function verifyPin() {
+      if (currentInputPin === correctPin) {
+        sessionStorage.setItem("barman_authenticated", "true");
+        document.getElementById("lock-screen").classList.add("unlocked");
+        clearPin();
+        showToast("Bienvenue Chef Barman !");
+      } else {
+        document.getElementById("pin-error").textContent = "Code PIN incorrect. Réessayez.";
+        clearPin();
+      }
+    }
+
+    function lockScreen() {
+      sessionStorage.removeItem("barman_authenticated");
+      document.getElementById("lock-screen").classList.remove("unlocked");
+      clearPin();
+    }
+
+    function updatePinCode() {
+      const newPin = document.getElementById("new-pin-input").value.trim();
+      if (/^\d{4}$/.test(newPin)) {
+        correctPin = newPin;
+        localStorage.setItem("barman_pin_code", newPin);
+        document.getElementById("current-pin-display").textContent = newPin;
+        document.getElementById("new-pin-input").value = "";
+        showToast("Code PIN mis à jour avec succès !");
+      } else {
+        alert("Veuillez saisir un code à 4 chiffres.");
+      }
+    }
+
+    // 2. SYNTHÉTISEUR SONORE WEB AUDIO (AUCUN MP3 EXTERNE REQUIS)
+    function playChimeSound() {
+      if (!isSoundEnabled) return;
+      try {
+        const AudioCtx = window.AudioContext || window.webkitAudioContext;
+        const ctx = new AudioCtx();
+
+        // 1ère note douce
+        const osc1 = ctx.createOscillator();
+        const gain1 = ctx.createGain();
+        osc1.type = "sine";
+        osc1.frequency.setValueAtTime(587.33, ctx.currentTime); // D5
+        gain1.gain.setValueAtTime(0.35, ctx.currentTime);
+        gain1.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.6);
+        osc1.connect(gain1);
+        gain1.connect(ctx.destination);
+        osc1.start();
+        osc1.stop(ctx.currentTime + 0.6);
+
+        // 2e note cristalline
+        setTimeout(() => {
+          const osc2 = ctx.createOscillator();
+          const gain2 = ctx.createGain();
+          osc2.type = "sine";
+          osc2.frequency.setValueAtTime(880, ctx.currentTime); // A5
+          gain2.gain.setValueAtTime(0.4, ctx.currentTime);
+          gain2.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.8);
+          osc2.connect(gain2);
+          gain2.connect(ctx.destination);
+          osc2.start();
+          osc2.stop(ctx.currentTime + 0.8);
+        }, 140);
+      } catch (err) {
+        console.warn("Audio Context non initialisé", err);
+      }
+    }
+
+    function toggleAudio() {
+      isSoundEnabled = !isSoundEnabled;
+      localStorage.setItem("barman_sound_enabled", isSoundEnabled ? "true" : "false");
+      const btn = document.getElementById("audio-toggle-btn");
+      if (isSoundEnabled) {
+        btn.classList.remove("muted");
+        btn.textContent = "🔊";
+        showToast("Sonnette activée");
+      } else {
+        btn.classList.add("muted");
+        btn.textContent = "🔇";
+        showToast("Sonnette coupée");
+      }
+    }
+
+    // 3. DONNÉES LOCALES & SYNCHRONISATION DES COMMANDES
+    const DEFAULT_ORDERS = [
+      {
+        id: "CMD-8041",
+        clientName: "Marc Houndegbe",
+        clientPhone: "+22997123456",
+        clientAddress: "Haie Vive, Villa 45, Cotonou",
+        cocktails: [
+          { name: "Le Smoking Old Fashioned", quantity: 2, price: 200 },
+          { name: "Le Velvet Passion", quantity: 1, price: 200 }
+        ],
+        total: 600,
+        paymentStatus: "Payé (FedaPay)",
+        status: "Nouvelle",
+        createdAt: "Aujourd'hui à 12:05",
+        isToday: true
+      },
+      {
+        id: "CMD-8040",
+        clientName: "Aïcha Diallo",
+        clientPhone: "+22966897412",
+        clientAddress: "Ganhi, Immeuble Horizon 3e étage",
+        cocktails: [
+          { name: "L’Émeraude Basil Smash", quantity: 2, price: 200 }
+        ],
+        total: 400,
+        paymentStatus: "Payé (FedaPay)",
+        status: "En-preparation",
+        createdAt: "Aujourd'hui à 11:42",
+        isToday: true
+      },
+      {
+        id: "CMD-8039",
+        clientName: "David Zinsou",
+        clientPhone: "+22995412033",
+        clientAddress: "Cadjehoun, Rue des Cocotiers",
+        cocktails: [
+          { name: "Le Negroni Solaire 24K", quantity: 3, price: 200 },
+          { name: "Le Manhattan Noir Truffé", quantity: 1, price: 200 }
+        ],
+        total: 800,
+        paymentStatus: "Payé (FedaPay)",
+        status: "En-livraison",
+        createdAt: "Aujourd'hui à 10:15",
+        isToday: true
+      },
+      {
+        id: "CMD-8038",
+        clientName: "Sophie Martin",
+        clientPhone: "+22962114477",
+        clientAddress: "Fidjrossè Calvaire",
+        cocktails: [
+          { name: "Le Bissap Frais Mentholé", quantity: 4, price: 200 }
+        ],
+        total: 800,
+        paymentStatus: "Payé (FedaPay)",
+        status: "Livree",
+        createdAt: "Hier à 21:30",
+        isToday: false
+      }
+    ];
+
+    let orders = JSON.parse(localStorage.getItem("barman_orders_list") || "null") || DEFAULT_ORDERS;
+    let currentOrderFilter = "all";
+
+    function saveOrders() {
+      localStorage.setItem("barman_orders_list", JSON.stringify(orders));
+      updateOrderCounts();
+      renderOrders();
+    }
+
+    function updateOrderCounts() {
+      const countAll = orders.length;
+      const countToday = orders.filter(o => o.isToday).length;
+      const countTodo = orders.filter(o => o.status === "Nouvelle" || o.status === "En-preparation").length;
+      const countDone = orders.filter(o => o.status === "Livree").length;
+
+      document.getElementById("count-all").textContent = countAll;
+      document.getElementById("count-today").textContent = countToday;
+      document.getElementById("count-todo").textContent = countTodo;
+      document.getElementById("count-done").textContent = countDone;
+
+      // Pastille de notification
+      const notifPill = document.getElementById("new-orders-pill");
+      const notifCount = document.getElementById("new-orders-count");
+      const tabBadge = document.getElementById("tab-orders-badge");
+
+      if (countTodo > 0) {
+        notifPill.style.display = "flex";
+        notifCount.textContent = countTodo;
+        tabBadge.style.display = "flex";
+        tabBadge.textContent = countTodo;
+      } else {
+        notifPill.style.display = "none";
+        tabBadge.style.display = "none";
+      }
+    }
+
+    function setOrderFilter(filter, btn) {
+      currentOrderFilter = filter;
+      document.querySelectorAll(".filter-btn").forEach(b => b.classList.remove("active"));
+      if (btn) btn.classList.add("active");
+      renderOrders();
+    }
+
+    // Cycle des statuts en 1 clic
+    const STATUS_FLOW = {
+      "Nouvelle": "En-preparation",
+      "En-preparation": "En-livraison",
+      "En-livraison": "Livree",
+      "Livree": "Nouvelle"
+    };
+
+    const STATUS_LABELS = {
+      "Nouvelle": "🔴 Nouvelle",
+      "En-preparation": "🟠 En préparation",
+      "En-livraison": "🔵 En livraison",
+      "Livree": "🟢 Livrée"
+    };
+
+    function cycleOrderStatus(orderId) {
+      const order = orders.find(o => o.id === orderId);
+      if (!order) return;
+
+      const nextStatus = STATUS_FLOW[order.status] || "Nouvelle";
+      order.status = nextStatus;
+
+      // Si le statut passe à En livraison, notifier le client
+      if (nextStatus === "En-livraison") {
+        showToast(`Commande ${order.id} passée en route !`);
+        // Notification API si disponible
+        fetch("/api/orders/status", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ order, newStatus: "En livraison" })
+        }).catch(() => {});
+      } else {
+        showToast(`Statut mis à jour : ${STATUS_LABELS[nextStatus]}`);
+      }
+
+      saveOrders();
+    }
+
+    function renderOrders() {
+      const listContainer = document.getElementById("orders-list");
+
+      const filtered = orders.filter(o => {
+        if (currentOrderFilter === "today") return o.isToday;
+        if (currentOrderFilter === "A-preparer") return o.status === "Nouvelle" || o.status === "En-preparation";
+        if (currentOrderFilter === "Livree") return o.status === "Livree";
+        return true;
+      });
+
+      if (filtered.length === 0) {
+        listContainer.innerHTML = `
+          <div style="text-align: center; padding: 50px 20px; color: var(--text-dim);">
+            <div style="font-size: 2.2rem; margin-bottom: 8px;">🍸</div>
+            <p>Aucune commande dans cette catégorie pour le moment.</p>
+          </div>
+        `;
+        return;
+      }
+
+      listContainer.innerHTML = filtered.map(o => {
+        const cleanPhone = o.clientPhone.replace(/\s+/g, '');
+        const waMsg = encodeURIComponent(`Bonjour ${o.clientName}, c'est l'Atelier Cocktail House concernant votre commande ${o.id}.`);
+
+        return `
+          <article class="order-card status-${o.status}" id="order-${o.id}">
+            <div class="order-card-header">
+              <div class="order-num-time">
+                <span class="order-num">${o.id}</span>
+                <span class="order-time">${o.createdAt}</span>
+              </div>
+
+              <!-- Statut cliquable en un clic -->
+              <button
+                type="button"
+                class="status-badge-btn badge-${o.status}"
+                onclick="cycleOrderStatus('${o.id}')"
+                title="Cliquer pour passer au statut suivant"
+              >
+                <span>${STATUS_LABELS[o.status]}</span>
+                <span style="font-size: 0.8em; opacity: 0.8;">↻</span>
+              </button>
+            </div>
+
+            <div class="order-client-block">
+              <div class="client-name">${o.clientName}</div>
+              <div class="client-address">
+                <span>📍</span>
+                <span>${o.clientAddress}</span>
+              </div>
+            </div>
+
+            <!-- Liste des cocktails -->
+            <ul class="order-items-list">
+              ${o.cocktails.map(item => `
+                <li class="order-item-row">
+                  <span class="item-qty-name">
+                    <span class="item-qty-badge">${item.quantity}x</span>
+                    ${item.name}
+                  </span>
+                  <span style="color: var(--text-muted); font-size: 0.85rem;">
+                    ${item.price * item.quantity} FCFA
+                  </span>
+                </li>
+              `).join("")}
+            </ul>
+
+            <div class="order-footer-row">
+              <span class="fedapay-status-tag">✓ ${o.paymentStatus}</span>
+              <span class="order-total-price">${o.total} FCFA</span>
+            </div>
+
+            <!-- Boutons tactiles pour smartphone à une main -->
+            <div class="order-actions-grid">
+              <a href="tel:${cleanPhone}" class="btn-action-touch btn-call">
+                <span>📞</span>
+                <span>Appeler</span>
+              </a>
+              <a href="https://wa.me/${cleanPhone}?text=${waMsg}" target="_blank" rel="noopener noreferrer" class="btn-action-touch btn-whatsapp">
+                <span>💬</span>
+                <span>WhatsApp</span>
+              </a>
+            </div>
+          </article>
+        `;
+      }).join("");
+    }
+
+    function simulateNewOrder() {
+      const randomNum = Math.floor(1000 + Math.random() * 9000);
+      const newOrder = {
+        id: `CMD-${randomNum}`,
+        clientName: "Nouveau Client FedaPay",
+        clientPhone: "+22997000000",
+        clientAddress: "Quartier Haie Vive, Cotonou",
+        cocktails: [
+          { name: "Le Smoking Old Fashioned", quantity: 1, price: 200 }
+        ],
+        total: 200,
+        paymentStatus: "Payé (FedaPay)",
+        status: "Nouvelle",
+        createdAt: "À l'instant",
+        isToday: true
+      };
+
+      orders.unshift(newOrder);
+      saveOrders();
+      playChimeSound();
+      showToast("🔔 Nouvelle commande reçue !");
+      switchTab('orders', 'A-preparer');
+    }
+
+    // 4. DEMANDES DE DEVIS ÉVÉNEMENTIEL
+    const DEFAULT_QUOTES = [
+      {
+        id: "DEV-102",
+        clientName: "Stéphanie Kouassi",
+        clientPhone: "+22996112233",
+        clientEmail: "stephanie@gmail.com",
+        eventType: "Mariage Prestigieux",
+        eventDate: "15 Novembre 2026",
+        guestsCount: 150,
+        message: "Nous souhaitons un bar mobile et 2 barmen pour la soirée avec 4 recettes signatures exclusives.",
+        status: "Nouvelle"
+      },
+      {
+        id: "DEV-101",
+        clientName: "Société InnovTech",
+        clientPhone: "+22995887744",
+        clientEmail: "contact@innovtech.bj",
+        eventType: "Soirée d'Entreprise",
+        eventDate: "28 Octobre 2026",
+        guestsCount: 80,
+        message: "Cocktail dînatoire avec mocktails botaniques et cocktails signatures pour le lancement de produit.",
+        status: "Devis envoyé"
+      }
+    ];
+
+    let quotes = JSON.parse(localStorage.getItem("barman_quotes_list") || "null") || DEFAULT_QUOTES;
+
+    function renderQuotes() {
+      const container = document.getElementById("quotes-list");
+      if (quotes.length === 0) {
+        container.innerHTML = `<div style="text-align: center; color: var(--text-dim); padding: 40px;">Aucune demande de devis reçue.</div>`;
+        return;
+      }
+
+      container.innerHTML = quotes.map(q => {
+        const cleanPhone = q.clientPhone.replace(/\s+/g, '');
+        const waMsg = encodeURIComponent(`Bonjour ${q.clientName}, c'est Cocktail House concernant votre demande de devis pour votre ${q.eventType}.`);
+
+        return `
+          <article class="quote-card">
+            <div class="quote-header">
+              <div>
+                <span style="font-size: 0.8rem; color: var(--text-dim);">${q.id}</span>
+                <div class="quote-event-type">${q.eventType}</div>
+              </div>
+              <span style="font-size: 0.85rem; font-weight: 700; color: var(--gold);">${q.guestsCount} invités</span>
+            </div>
+
+            <div class="quote-meta-grid">
+              <div>👤 <strong>${q.clientName}</strong></div>
+              <div>📅 <strong>${q.eventDate}</strong></div>
+              <div>📞 ${q.clientPhone}</div>
+              <div>✉️ ${q.clientEmail}</div>
+            </div>
+
+            <div class="quote-message-box">
+              « ${q.message} »
+            </div>
+
+            <select class="quote-status-select" onchange="updateQuoteStatus('${q.id}', this.value)">
+              <option value="Nouvelle" ${q.status === 'Nouvelle' ? 'selected' : ''}>Statut : Nouvelle</option>
+              <option value="Contactée" ${q.status === 'Contactée' ? 'selected' : ''}>Statut : Contactée</option>
+              <option value="Devis envoyé" ${q.status === 'Devis envoyé' ? 'selected' : ''}>Statut : Devis envoyé</option>
+              <option value="Confirmée" ${q.status === 'Confirmée' ? 'selected' : ''}>Statut : Confirmée</option>
+              <option value="Refusée" ${q.status === 'Refusée' ? 'selected' : ''}>Statut : Refusée</option>
+            </select>
+
+            <div class="order-actions-grid">
+              <a href="tel:${cleanPhone}" class="btn-action-touch btn-call">
+                <span>📞</span>
+                <span>Appeler</span>
+              </a>
+              <a href="https://wa.me/${cleanPhone}?text=${waMsg}" target="_blank" rel="noopener noreferrer" class="btn-action-touch btn-whatsapp">
+                <span>💬</span>
+                <span>WhatsApp</span>
+              </a>
+            </div>
+          </article>
+        `;
+      }).join("");
+    }
+
+    function updateQuoteStatus(quoteId, newStatus) {
+      const q = quotes.find(item => item.id === quoteId);
+      if (q) {
+        q.status = newStatus;
+        localStorage.setItem("barman_quotes_list", JSON.stringify(quotes));
+        showToast(`Statut devis : ${newStatus}`);
+      }
+    }
+
+    // 5. GESTION DES 35 COCKTAILS (DISPONIBILITÉ & PRIX)
+    // Synchronisation directe avec le catalogue officiel
+    const CATALOG_35 = [
+      "Le Smoking Old Fashioned", "Le Velvet Passion", "Le Negroni Solaire 24K",
+      "Le Manhattan Noir Truffé", "La Perle Noire Épicée", "Le Nuage Matcha Clarifié",
+      "Le Royal Lavande Fizz", "L’Espresso Martini Impérial", "Le Moscow Mule de Cuivre",
+      "Le Dry Martini Cristal", "La Margarita Salée Fumée", "Le Whiskey Sour Velours",
+      "Le French 75 Diamant", "Le Sidecar Héritage", "L’Émeraude Basil Smash",
+      "Le Jardin de Concombre Givré", "Le Spritz Pamplemousse Rose", "Le Frisson Pomme & Shiso",
+      "Le Souffle Gingembre Citronnelle", "Le Collins Thym & Fleur de Sel", "La Douceur Pêche & Verveine",
+      "La Piña Colada d’Or Fumé", "Le Mai Tai Bourbon & Vanille", "Le Daiquiri Mangue & Piment",
+      "Le Punch Hibiscus Rubis", "La Caresse Litchi & Gingembre", "Le Lagon Bleu Coco Givré",
+      "L’Échappée Goyave & Romarin", "Le Mojito Rubis Framboise", "L’Éclat Passion & Fleurs de Sureau",
+      "Le Voile Matcha & Eau de Coco", "L’Élixir Citron & Gingembre", "L’Oasis Concombre & Aloe Vera",
+      "Le Bissap Frais Mentholé", "La Brise Mangue & Ananas"
+    ];
+
+    let cocktailAvailability = JSON.parse(localStorage.getItem("cocktail_availability_status") || "{}");
+    let cocktailCustomPrices = JSON.parse(localStorage.getItem("cocktail_custom_prices") || "{}");
+
+    function renderCocktailsManage() {
+      const list = document.getElementById("cocktails-manage-list");
+      let availableCount = 0;
+
+      list.innerHTML = CATALOG_35.map((name, index) => {
+        const isSoldOut = cocktailAvailability[name] === false;
+        if (!isSoldOut) availableCount++;
+        const currentPrice = cocktailCustomPrices[name] || 200;
+
+        return `
+          <div class="cocktail-manage-row ${isSoldOut ? 'sold-out' : ''}" id="manage-row-${index}">
+            <div class="cocktail-manage-info">
+              <div class="cocktail-manage-name">${name}</div>
+              <div class="cocktail-manage-sub">${isSoldOut ? '❌ Épuisé sur le site' : '✅ Disponible en commande'}</div>
+            </div>
+
+            <!-- Modif rapide du prix -->
+            <div class="price-input-wrap">
+              <input
+                type="number"
+                class="price-input"
+                value="${currentPrice}"
+                step="50"
+                min="50"
+                onchange="updateCocktailPrice('${name}', this.value)"
+              >
+              <span class="price-currency">F</span>
+            </div>
+
+            <!-- Interrupteur Disponible / Épuisé -->
+            <div class="switch-wrap">
+              <label class="toggle-switch">
+                <input
+                  type="checkbox"
+                  ${!isSoldOut ? 'checked' : ''}
+                  onchange="toggleCocktailAvailability('${name}', this.checked, ${index})"
+                >
+                <span class="slider"></span>
+              </label>
+            </div>
+          </div>
+        `;
+      }).join("");
+
+      document.getElementById("available-count-badge").textContent = `${availableCount}/35 dispos`;
+    }
+
+    function toggleCocktailAvailability(name, isAvailable, index) {
+      cocktailAvailability[name] = isAvailable;
+      localStorage.setItem("cocktail_availability_status", JSON.stringify(cocktailAvailability));
+
+      const row = document.getElementById(`manage-row-${index}`);
+      if (row) {
+        if (!isAvailable) {
+          row.classList.add("sold-out");
+          row.querySelector(".cocktail-manage-sub").textContent = "❌ Épuisé sur le site";
+          showToast(`${name} marqué ÉPUISÉ`);
+        } else {
+          row.classList.remove("sold-out");
+          row.querySelector(".cocktail-manage-sub").textContent = "✅ Disponible en commande";
+          showToast(`${name} remis en DISPONIBLE`);
+        }
+      }
+
+      // Recompte
+      let avail = Object.values(cocktailAvailability).filter(v => v !== false).length;
+      document.getElementById("available-count-badge").textContent = `${avail}/35 dispos`;
+    }
+
+    function updateCocktailPrice(name, newPrice) {
+      const val = parseInt(newPrice, 10);
+      if (!isNaN(val) && val > 0) {
+        cocktailCustomPrices[name] = val;
+        localStorage.setItem("cocktail_custom_prices", JSON.stringify(cocktailCustomPrices));
+        showToast(`Prix de ${name} : ${val} FCFA`);
+      }
+    }
+
+    // 6. GESTION DES ONGLETS DE NAVIGATION
+    function switchTab(tabName, optionalFilter) {
+      document.querySelectorAll(".view-section").forEach(sec => sec.classList.remove("active"));
+      document.querySelectorAll(".nav-tab-btn").forEach(btn => btn.classList.remove("active"));
+
+      const targetSection = document.getElementById(`view-${tabName}`);
+      const targetBtn = document.getElementById(`tab-btn-${tabName}`);
+
+      if (targetSection) targetSection.classList.add("active");
+      if (targetBtn) targetBtn.classList.add("active");
+
+      if (tabName === "orders") {
+        if (optionalFilter) {
+          const btn = document.querySelector(`.filter-btn[onclick*="${optionalFilter}"]`);
+          setOrderFilter(optionalFilter, btn);
+        } else {
+          renderOrders();
+        }
+      } else if (tabName === "quotes") {
+        renderQuotes();
+      } else if (tabName === "menu") {
+        renderCocktailsManage();
+      }
+
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+
+    function showToast(msg) {
+      const toast = document.getElementById("admin-toast");
+      toast.textContent = msg;
+      toast.classList.add("visible");
+      setTimeout(() => {
+        toast.classList.remove("visible");
+      }, 2200);
+    }
+
+    // INITIALISATION
+    window.addEventListener("DOMContentLoaded", () => {
+      // Vérifier si déjà authentifié dans cette session
+      if (sessionStorage.getItem("barman_authenticated") === "true") {
+        document.getElementById("lock-screen").classList.add("unlocked");
+      }
+
+      // Initialiser le statut audio
+      const audioBtn = document.getElementById("audio-toggle-btn");
+      if (!isSoundEnabled) {
+        audioBtn.classList.add("muted");
+        audioBtn.textContent = "🔇";
+      }
+
+      document.getElementById("current-pin-display").textContent = correctPin;
+
+      saveOrders();
+      renderQuotes();
+      renderCocktailsManage();
+    });
+  </script>
+</body>
+</html>

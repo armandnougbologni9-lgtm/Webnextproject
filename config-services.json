@@ -1,0 +1,36 @@
+{
+  "admin": {
+    "pinCode": "2026",
+    "notes": "Code PIN modifiable pour l'accès rapide du barman sur téléphone (ex: 2026)"
+  },
+  "fedapay": {
+    "liveMode": false,
+    "publicKey": "pk_live_your_fedapay_public_key",
+    "secretKey": "sk_live_your_fedapay_secret_key",
+    "webhookSecret": "wh_sec_your_webhook_secret",
+    "paymentUrl": "https://me.fedapay.com/MjEZRb7k",
+    "notes": "Renseignez votre Webhook Secret pour valider les paiements automatiquement côté serveur"
+  },
+  "emailService": {
+    "provider": "resend",
+    "resendApiKey": "re_your_api_key_here",
+    "barmanEmail": "barman@cocktailhouse.com",
+    "senderEmail": "commandes@cocktailhouse.com",
+    "notes": "Compatible Resend, EmailJS ou SendGrid. Les emails sont envoyés automatiquement au barman et au client."
+  },
+  "database": {
+    "provider": "local_storage_and_api",
+    "firebaseConfig": {
+      "apiKey": "",
+      "authDomain": "",
+      "projectId": "",
+      "storageBucket": "",
+      "messagingSenderId": "",
+      "appId": ""
+    },
+    "supabaseConfig": {
+      "url": "",
+      "anonKey": ""
+    }
+  }
+}

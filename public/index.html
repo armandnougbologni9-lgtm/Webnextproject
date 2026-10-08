@@ -562,6 +562,24 @@
       color: #D3D8E6;
     }
 
+    .cocktail-card.sold-out {
+      opacity: 0.42;
+      filter: grayscale(0.8);
+      border-color: rgba(239, 68, 68, 0.35) !important;
+      cursor: not-allowed;
+    }
+
+    .cocktail-card.sold-out:hover {
+      transform: none !important;
+      box-shadow: none !important;
+    }
+
+    .sold-out-tag {
+      background: #EF4444 !important;
+      color: #FFFFFF !important;
+      font-weight: 800 !important;
+    }
+
     .cocktail-card-btn {
       width: 100%;
       padding: 12px 18px;
@@ -1821,18 +1839,25 @@
         return;
       }
 
+      // Lecture des états synchronisés depuis l'espace barman (admin)
+      const availability = JSON.parse(localStorage.getItem("cocktail_availability_status") || "{}");
+      const customPrices = JSON.parse(localStorage.getItem("cocktail_custom_prices") || "{}");
+
       grid.innerHTML = filtered.map(c => {
         const theme = getCocktailFlavorTheme(c);
+        const isSoldOut = availability[c.name] === false;
+        const currentPrice = customPrices[c.name] || c.price;
+
         return `
           <article
-            class="cocktail-card ${activeCocktail === c.id ? 'active' : ''}"
+            class="cocktail-card ${activeCocktail === c.id ? 'active' : ''} ${isSoldOut ? 'sold-out' : ''}"
             id="card-${c.id}"
             style="--card-accent: ${theme.accent}; --card-glow: ${theme.glow};"
             onmouseenter="applyCocktailTheme('${c.id}')"
             onclick="selectCocktail('${c.id}')"
             tabindex="0"
             role="listitem"
-            aria-label="${c.name}, ${c.tagline}, ${c.price} ${c.currency}"
+            aria-label="${c.name}, ${c.tagline}, ${currentPrice} ${c.currency}"
           >
             <!-- Onde liquide chromatique (sans verre) -->
             <div
@@ -1840,12 +1865,14 @@
               style="--swatch-1: ${theme.color1}; --swatch-2: ${theme.color2}; --swatch-accent: ${theme.accent};"
             >
               <div class="liquid-wave"></div>
-              <span class="swatch-tag">${theme.universe}</span>
+              <span class="swatch-tag ${isSoldOut ? 'sold-out-tag' : ''}">
+                ${isSoldOut ? 'ÉPUISÉ CE SOIR' : theme.universe}
+              </span>
             </div>
 
             <div class="cocktail-header">
               <h3 class="cocktail-name">${c.name}</h3>
-              <div class="cocktail-price">${c.price} ${c.currency}</div>
+              <div class="cocktail-price">${currentPrice} ${c.currency}</div>
             </div>
 
             <div class="cocktail-tagline">« ${c.tagline} »</div>
@@ -1859,11 +1886,11 @@
             <button
               type="button"
               class="cocktail-card-btn"
-              onclick="event.stopPropagation(); openOrderDrawer('${c.id}')"
-              aria-label="Choisir et commander ${c.name}"
+              ${isSoldOut ? 'disabled style="opacity: 0.5; cursor: not-allowed;"' : `onclick="event.stopPropagation(); openOrderDrawer('${c.id}')"`}
+              aria-label="${isSoldOut ? 'Cocktail épuisé' : `Choisir et commander ${c.name}`}"
             >
-              <span>Choisir ce cocktail</span>
-              <span>→</span>
+              <span>${isSoldOut ? 'Victime de son succès' : 'Choisir ce cocktail'}</span>
+              <span>${isSoldOut ? '✕' : '→'}</span>
             </button>
           </article>
         `;
@@ -1998,9 +2025,18 @@
 
     function populateDrawerSelect() {
       const select = document.getElementById("drawer-cocktail-select");
-      select.innerHTML = COCKTAILS.map(c => `
-        <option value="${c.id}">${c.name} — ${c.tagline} (200 FCFA)</option>
-      `).join("");
+      const availability = JSON.parse(localStorage.getItem("cocktail_availability_status") || "{}");
+      const customPrices = JSON.parse(localStorage.getItem("cocktail_custom_prices") || "{}");
+
+      select.innerHTML = COCKTAILS.map(c => {
+        const isSoldOut = availability[c.name] === false;
+        const price = customPrices[c.name] || c.price;
+        return `
+          <option value="${c.id}" ${isSoldOut ? 'disabled' : ''}>
+            ${c.name} — ${c.tagline} (${price} FCFA) ${isSoldOut ? '— [ÉPUISÉ]' : ''}
+          </option>
+        `;
+      }).join("");
     }
 
     function openOrderDrawer(preferredCocktailId) {
