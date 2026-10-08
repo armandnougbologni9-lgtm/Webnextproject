@@ -607,6 +607,99 @@
     /* ==========================================================================
        SECTION COMMENT ÇA MARCHE (3 ÉTAPES)
        ========================================================================== */
+    /* ==========================================================================
+       SECTION NOS BARMEN (STYLE SOBRE & NOIR ET BLANC AU SURVOL)
+       ========================================================================== */
+    .section-barmen {
+      padding: 90px 0;
+      position: relative;
+    }
+
+    .barmen-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+      gap: 32px;
+      max-width: 860px;
+      margin: 0 auto;
+    }
+
+    .barman-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-lg);
+      overflow: hidden;
+      backdrop-filter: blur(14px);
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+      transition: all var(--transition-smooth);
+      display: flex;
+      flex-direction: column;
+    }
+
+    .barman-card:hover {
+      transform: translateY(-6px);
+      border-color: var(--border-gold);
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.6), 0 0 26px rgba(212, 175, 55, 0.2);
+    }
+
+    .barman-photo-wrap {
+      position: relative;
+      width: 100%;
+      height: 350px;
+      overflow: hidden;
+      background: #0D101A;
+    }
+
+    .barman-photo {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: center 15%;
+      filter: grayscale(100%);
+      transition: filter 0.6s cubic-bezier(0.16, 1, 0.3, 1), transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .barman-card:hover .barman-photo {
+      filter: grayscale(0%);
+      transform: scale(1.05);
+    }
+
+    .barman-photo-overlay {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(180deg, rgba(0, 0, 0, 0) 50%, rgba(14, 18, 28, 0.95) 100%);
+      pointer-events: none;
+    }
+
+    .barman-content {
+      padding: 24px 26px 28px;
+      display: flex;
+      flex-direction: column;
+      flex-grow: 1;
+    }
+
+    .barman-name {
+      font-family: var(--font-serif);
+      font-size: 1.65rem;
+      font-weight: 700;
+      color: #FFFFFF;
+      margin-bottom: 6px;
+    }
+
+    .barman-specialty {
+      font-size: 0.85rem;
+      font-weight: 700;
+      color: var(--accent);
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      margin-bottom: 14px;
+    }
+
+    .barman-presentation {
+      font-size: 0.92rem;
+      color: var(--text-muted);
+      line-height: 1.65;
+    }
+
     .section-steps {
       padding: 90px 0;
       background: radial-gradient(circle at 50% 50%, rgba(212, 175, 55, 0.04) 0%, transparent 60%);
@@ -1007,6 +1100,7 @@
 
         <nav class="nav-links" aria-label="Navigation">
           <a href="#cocktails">Nos 35 Cocktails</a>
+          <a href="#barmen">Nos Barmen</a>
           <a href="#etapes">Comment ça marche</a>
           <a href="#evenements">Bar Événementiel</a>
         </nav>
@@ -1100,6 +1194,23 @@
       </div>
     </section>
 
+    <!-- SECTION « NOS BARMEN » -->
+    <section class="section-barmen" id="barmen" aria-label="Nos Barmen Mixologues">
+      <div class="section-header">
+        <div class="badge-gold">
+          <span>Les Maîtres Artisans</span>
+        </div>
+        <h2 class="section-title">Nos Barmen</h2>
+        <p class="section-desc">
+          L&apos;excellence du geste, la passion du produit et l&apos;alchimie liquide. Découvrez les créateurs derrière chacune de nos 35 recettes.
+        </p>
+      </div>
+
+      <div class="barmen-grid" id="barmen-grid">
+        <!-- Rendu dynamique par JavaScript depuis le tableau BARMEN -->
+      </div>
+    </section>
+
     <!-- Comment ça marche (3 étapes) -->
     <section class="section-steps" id="etapes">
       <div class="section-header">
@@ -1157,7 +1268,7 @@
             <li><span class="feature-dot"></span> Équipe de barmen mixologues dédiés avec démonstrations de flair</li>
             <li><span class="feature-dot"></span> Carte personnalisée selon le thème de votre célébration</li>
           </ul>
-          <button type="button" class="btn btn-gold" onclick="openOrderDrawer('evenement')">
+          <button type="button" class="btn btn-gold" onclick="openQuoteDrawer()">
             Demander un Devis Événementiel
           </button>
         </div>
@@ -1292,6 +1403,71 @@
         <p class="fedapay-security-msg">
           Paiement sécurisé via FedaPay. Veuillez ne pas fermer cette page avant la confirmation de votre transaction.
         </p>
+      </form>
+    </div>
+  </div>
+
+  <!-- PANNEAU DE DEVIS ÉVÉNEMENTIEL (AVEC SÉLECTION DU BARMAN) -->
+  <div class="order-drawer-backdrop" id="quote-drawer-backdrop">
+    <div class="order-drawer" role="dialog" aria-modal="true" aria-labelledby="quote-drawer-title-id">
+      <div class="drawer-header">
+        <h3 class="drawer-title" id="quote-drawer-title-id">Devis Bar Événementiel</h3>
+        <button type="button" class="drawer-close" onclick="closeQuoteDrawer()" aria-label="Fermer le panneau">✕</button>
+      </div>
+
+      <form id="quote-form" onsubmit="handleQuoteSubmit(event)">
+        <div class="form-group">
+          <label class="form-label" for="quote-name">Votre Nom & Prénom</label>
+          <input type="text" id="quote-name" class="form-input" placeholder="Ex: Armand Nougbologni" required>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="quote-phone">Téléphone / WhatsApp</label>
+          <input type="tel" id="quote-phone" class="form-input" placeholder="Ex: +229 97 00 00 00" required>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="quote-email">Email</label>
+          <input type="email" id="quote-email" class="form-input" placeholder="Ex: contact@evenement.com" required>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="quote-type">Type d&apos;Événement</label>
+          <select id="quote-type" class="form-select" required>
+            <option value="Mariage Prestigieux">Mariage Prestigieux</option>
+            <option value="Soirée d'Entreprise">Soirée d&apos;Entreprise / Gala</option>
+            <option value="Anniversaire Privé">Anniversaire Privé</option>
+            <option value="Cocktail Dînatoire">Cocktail Dînatoire</option>
+            <option value="Autre Célébration">Autre Célébration</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="quote-date">Date Prévue</label>
+          <input type="date" id="quote-date" class="form-input" required>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="quote-guests">Nombre d&apos;Invités Estimé</label>
+          <input type="number" id="quote-guests" class="form-input" placeholder="Ex: 80" min="10" required>
+        </div>
+
+        <!-- CHAMP DEMANDÉ : BARMAN SOUHAITÉ -->
+        <div class="form-group">
+          <label class="form-label" for="quote-barman-select">Barman Souhaité</label>
+          <select id="quote-barman-select" class="form-select">
+            <!-- Alimenté dynamiquement par le tableau JS BARMEN + « Peu importe » -->
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="quote-message">Vos Souhaits ou Détails Particuliers</label>
+          <textarea id="quote-message" class="form-input" rows="3" placeholder="Précisez vos préférences de cocktails, lieu, horaires..."></textarea>
+        </div>
+
+        <button type="submit" class="btn btn-gold" style="width: 100%;">
+          Envoyer ma Demande de Devis
+        </button>
       </form>
     </div>
   </div>
@@ -2100,11 +2276,120 @@
       window.location.href = FEDAPAY_LINK;
     }
 
+    // ==========================================================================
+    // 7. SECTION NOS BARMEN (TABLEAU JAVASCRIPT MODIFIABLE)
+    // ==========================================================================
+    const BARMEN = [
+      {
+        id: "armand",
+        name: "Armand",
+        specialty: "Chef Mixologue & Haute Infusion",
+        presentation: "Maître de l'alchimie liquide et des fûts de chêne. Il sublime les cocktails clarifiés, les infusions lentes et l'équilibre subtil des amers pour chaque création d'auteur.",
+        photo: "https://images.unsplash.com/photo-1574096079513-d8259312b785?auto=format&fit=crop&w=800&q=80"
+      },
+      {
+        id: "malik",
+        name: "Malik",
+        specialty: "Flair Bartending & Nectars Tropicaux",
+        presentation: "Virtuose du shaker et de l'énergie scénique. Il transforme chaque préparation en spectacle avec ses émulsions soyeuses et ses accords de fruits exotiques intenses.",
+        photo: "https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?auto=format&fit=crop&w=800&q=80"
+      }
+    ];
+
+    function renderBarmen() {
+      const container = document.getElementById("barmen-grid");
+      if (!container) return;
+
+      container.innerHTML = BARMEN.map(b => `
+        <article class="barman-card" id="barman-${b.id}" aria-label="${b.name}, ${b.specialty}">
+          <div class="barman-photo-wrap">
+            <img
+              src="${b.photo}"
+              alt="Portrait de ${b.name}"
+              class="barman-photo"
+              loading="lazy"
+            >
+            <div class="barman-photo-overlay"></div>
+          </div>
+
+          <div class="barman-content">
+            <h3 class="barman-name">${b.name}</h3>
+            <div class="barman-specialty">${b.specialty}</div>
+            <p class="barman-presentation">${b.presentation}</p>
+          </div>
+        </article>
+      `).join("");
+    }
+
+    // GESTION DU PANNEAU DE DEVIS ÉVÉNEMENTIEL (AVEC SÉLECTION DU BARMAN)
+    function populateQuoteBarmanSelect() {
+      const select = document.getElementById("quote-barman-select");
+      if (!select) return;
+
+      const options = [
+        `<option value="Peu importe">Peu importe (Attribution automatique)</option>`,
+        ...BARMEN.map(b => `<option value="${b.name}">${b.name} (${b.specialty})</option>`)
+      ];
+
+      select.innerHTML = options.join("");
+    }
+
+    function openQuoteDrawer() {
+      populateQuoteBarmanSelect();
+      document.getElementById("quote-drawer-backdrop").classList.add("open");
+    }
+
+    function closeQuoteDrawer() {
+      document.getElementById("quote-drawer-backdrop").classList.remove("open");
+    }
+
+    document.getElementById("quote-drawer-backdrop").addEventListener("click", (e) => {
+      if (e.target.id === "quote-drawer-backdrop") closeQuoteDrawer();
+    });
+
+    function handleQuoteSubmit(e) {
+      e.preventDefault();
+      const name = document.getElementById("quote-name").value;
+      const phone = document.getElementById("quote-phone").value;
+      const email = document.getElementById("quote-email").value;
+      const eventType = document.getElementById("quote-type").value;
+      const eventDate = document.getElementById("quote-date").value;
+      const guests = parseInt(document.getElementById("quote-guests").value, 10);
+      const preferredBarman = document.getElementById("quote-barman-select").value;
+      const message = document.getElementById("quote-message").value;
+
+      const newQuote = {
+        id: "DEV-" + Math.floor(100 + Math.random() * 900),
+        clientName: name,
+        clientPhone: phone,
+        clientEmail: email,
+        eventType: eventType,
+        eventDate: eventDate,
+        guestsCount: guests,
+        preferredBarman: preferredBarman,
+        message: message || "Aucun message spécifique",
+        status: "Nouvelle"
+      };
+
+      // Sauvegarde dans la liste des devis pour synchronisation avec l'admin
+      try {
+        const quotes = JSON.parse(localStorage.getItem("barman_quotes_list") || "[]");
+        quotes.unshift(newQuote);
+        localStorage.setItem("barman_quotes_list", JSON.stringify(quotes));
+      } catch (err) {}
+
+      alert(`Merci ${name} ! Votre demande de devis pour votre ${eventType} avec le barman « ${preferredBarman} » a bien été transmise à notre équipe.`);
+      closeQuoteDrawer();
+      document.getElementById("quote-form").reset();
+    }
+
     // Initialisation au chargement du DOM
     window.addEventListener("DOMContentLoaded", () => {
       renderFilters();
       renderCocktails();
+      renderBarmen();
       populateDrawerSelect();
+      populateQuoteBarmanSelect();
       updateDrawerCalculations();
     });
   </script>
