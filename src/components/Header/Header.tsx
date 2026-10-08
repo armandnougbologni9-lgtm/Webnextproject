@@ -33,6 +33,9 @@ export const Header: React.FC = () => {
 
   return (
     <header className={`${styles.header} ${isScrolled ? styles.scrolled : ''}`} id="header">
+      <a href="#contenu-principal" className={styles.skipLink}>
+        Passer au contenu principal
+      </a>
       <div className={styles.inner}>
         {/* Logo */}
         <Link href="#accueil" className={styles.logo} onClick={closeMenu}>

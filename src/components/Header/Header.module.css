@@ -11,6 +11,25 @@
   transition: all var(--transition-normal);
 }
 
+.skipLink {
+  position: absolute;
+  top: -999px;
+  left: 20px;
+  background: var(--color-primary);
+  color: #090a0f;
+  padding: 10px 18px;
+  border-radius: var(--radius-sm);
+  font-weight: 700;
+  z-index: 1000;
+  text-decoration: none;
+  box-shadow: var(--shadow-md);
+  transition: top var(--transition-fast);
+}
+
+.skipLink:focus {
+  top: 16px;
+}
+
 .scrolled {
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
   background: rgba(9, 10, 15, 0.95);
