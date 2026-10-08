@@ -1,5 +1,6 @@
 import React from 'react';
 import Image from 'next/image';
+import Link from 'next/link';
 import { Sparkles, ArrowRight, GlassWater, Award, Clock } from 'lucide-react';
 import styles from './Hero.module.css';
 
@@ -27,10 +28,10 @@ export const Hero: React.FC = () => {
             </p>
 
             <div className={styles.actions}>
-              <a href="#contact" className={styles.primaryCta}>
+              <Link href="/commander" className={styles.primaryCta}>
                 <span>Commander maintenant</span>
                 <ArrowRight size={18} />
-              </a>
+              </Link>
 
               <a href="#cocktails" className={styles.secondaryCta}>
                 <span>Découvrir nos cocktails</span>

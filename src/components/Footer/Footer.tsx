@@ -72,29 +72,34 @@ export const Footer: React.FC = () => {
             <h4 className={styles.colTitle}>Navigation</h4>
             <ul className={styles.linksList}>
               <li>
-                <a href="#accueil" className={styles.link}>
+                <a href="/#accueil" className={styles.link}>
                   Accueil
                 </a>
               </li>
               <li>
-                <a href="#cocktails" className={styles.link}>
+                <a href="/#cocktails" className={styles.link}>
                   Nos Cocktails
                 </a>
               </li>
               <li>
-                <a href="#accueil" className={styles.link}>
-                  L'Atelier & Savoir-faire
+                <a href="/#evenements" className={styles.link}>
+                  Événements & Bars Mobiles
                 </a>
               </li>
               <li>
-                <a href="#contact" className={styles.link}>
+                <a href="/#a-propos" className={styles.link}>
+                  L&apos;Atelier & Savoir-faire
+                </a>
+              </li>
+              <li>
+                <Link href="/commander" className={styles.link}>
                   Commander en ligne
-                </a>
+                </Link>
               </li>
               <li>
-                <a href="#contact" className={styles.link}>
+                <Link href="/commander?type=evenement" className={styles.link}>
                   Devis Événementiel
-                </a>
+                </Link>
               </li>
             </ul>
           </div>

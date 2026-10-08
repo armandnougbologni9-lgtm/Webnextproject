@@ -11,11 +11,12 @@ interface NavItem {
 }
 
 const NAV_ITEMS: NavItem[] = [
-  { label: 'Accueil', href: '#accueil' },
-  { label: 'Cocktails', href: '#cocktails' },
-  { label: 'À propos', href: '#a-propos' },
-  { label: 'Témoignages', href: '#temoignages' },
-  { label: 'Contact', href: '#contact' },
+  { label: 'Accueil', href: '/#accueil' },
+  { label: 'Cocktails', href: '/#cocktails' },
+  { label: 'Événements', href: '/#evenements' },
+  { label: 'À propos', href: '/#a-propos' },
+  { label: 'Témoignages', href: '/#temoignages' },
+  { label: 'Contact', href: '/#contact' },
 ];
 
 export const Header: React.FC = () => {
@@ -119,14 +120,14 @@ export const Header: React.FC = () => {
 
         {/* Action Desktop & Bouton Hamburger Mobile */}
         <div className={styles.headerActions}>
-          <a
-            href="#contact"
+          <Link
+            href="/commander"
             className={styles.ctaButton}
-            onClick={(e) => handleNavClick(e, '#contact')}
+            onClick={closeMenu}
           >
             <span>Commander</span>
             <ArrowRight size={16} />
-          </a>
+          </Link>
 
           {/* Bouton Hamburger accessible */}
           <button
@@ -172,14 +173,14 @@ export const Header: React.FC = () => {
         </ul>
 
         {/* Action principale dans le menu mobile */}
-        <a
-          href="#contact"
+        <Link
+          href="/commander"
           className={`${styles.ctaButton} ${styles.mobileCta}`}
-          onClick={(e) => handleNavClick(e, '#contact')}
+          onClick={closeMenu}
         >
           <span>Commander</span>
           <ArrowRight size={18} />
-        </a>
+        </Link>
       </nav>
     </header>
   );

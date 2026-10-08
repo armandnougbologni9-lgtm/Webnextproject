@@ -1,6 +1,7 @@
 import Header from '@/components/Header/Header';
 import Hero from '@/components/Hero/Hero';
 import CocktailsSection from '@/components/CocktailsSection/CocktailsSection';
+import EventsSection from '@/components/EventsSection/EventsSection';
 import AboutSection from '@/components/AboutSection/AboutSection';
 import Testimonials from '@/components/Testimonials/Testimonials';
 import ContactForm from '@/components/ContactForm/ContactForm';
@@ -13,6 +14,7 @@ export default function Home() {
       <main id="contenu-principal">
         <Hero />
         <CocktailsSection />
+        <EventsSection />
         <AboutSection />
         <Testimonials />
         <ContactForm />

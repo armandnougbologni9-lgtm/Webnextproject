@@ -1,5 +1,6 @@
 import React from 'react';
 import Image from 'next/image';
+import Link from 'next/link';
 import { ShoppingBag, Sparkles } from 'lucide-react';
 import { Cocktail } from '@/data/cocktails';
 import styles from './CocktailCard.module.css';
@@ -58,15 +59,14 @@ export const CocktailCard: React.FC<CocktailCardProps> = ({ cocktail, onSelect }
           </ul>
         </div>
 
-        <a
-          href={`#contact?cocktail=${encodeURIComponent(cocktail.name)}`}
+        <Link
+          href={`/commander?cocktail=${cocktail.id}`}
           className={styles.ctaButton}
-          onClick={handleClick}
           aria-label={`Commander ${cocktail.name} pour ${cocktail.price} euros`}
         >
           <ShoppingBag size={17} />
           <span>Commander</span>
-        </a>
+        </Link>
       </div>
     </article>
   );
