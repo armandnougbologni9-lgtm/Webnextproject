@@ -1,0 +1,2076 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cocktail House — Bar à Cocktails Artisanal & Haute Mixologie</title>
+  <meta name="description" content="Bar à cocktails artisanal d'exception : découvrez 35 nectars d'auteur au tarif unique de 200 FCFA. Préparation minute et livraison scellée à température idéale. Paiement sécurisé FedaPay.">
+  
+  <!-- Polices Google Fonts : Playfair Display & Plus Jakarta Sans -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500;0,700;0,900;1,600&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+
+  <style>
+    /* ==========================================================================
+       VARIABLES ET DESIGN SYSTEM
+       ========================================================================== */
+    :root {
+      /* Fond sombre profond */
+      --bg-base: #06080F;
+      --bg-card: rgba(14, 18, 28, 0.75);
+      --bg-card-hover: rgba(22, 28, 44, 0.9);
+      
+      /* Couleurs dynamiques pilotées par le cocktail actif */
+      --glow-1: #D4AF37;
+      --glow-2: #B45309;
+      --glow-3: #8B0032;
+      --accent: #E5C358;
+      
+      /* Typographie et contrastes */
+      --text-main: #FFFFFF;
+      --text-muted: #A3AABF;
+      --text-dim: #687189;
+      --border-subtle: rgba(255, 255, 255, 0.08);
+      --border-gold: rgba(212, 175, 55, 0.35);
+
+      --font-serif: 'Playfair Display', Georgia, serif;
+      --font-sans: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+
+      --radius-sm: 8px;
+      --radius-md: 14px;
+      --radius-lg: 22px;
+      --radius-full: 9999px;
+
+      --transition-fast: 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+      --transition-smooth: 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    html {
+      scroll-behavior: smooth;
+      background-color: var(--bg-base);
+    }
+
+    body {
+      font-family: var(--font-sans);
+      color: var(--text-main);
+      background-color: var(--bg-base);
+      line-height: 1.6;
+      overflow-x: hidden;
+      position: relative;
+      min-height: 100vh;
+      transition: background 0.8s ease;
+    }
+
+    /* Halo liquide interactif réactif au cocktail survolé */
+    .liquid-aura {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 0;
+      opacity: 0.55;
+      transition: opacity 0.8s ease;
+      background: radial-gradient(circle at var(--aura-x, 50%) var(--aura-y, 30%), var(--glow-1) 0%, transparent 45%),
+                  radial-gradient(circle at 80% 80%, var(--glow-2) 0%, transparent 50%),
+                  radial-gradient(circle at 20% 90%, var(--glow-3) 0%, transparent 50%);
+      filter: blur(90px);
+    }
+
+    /* Canvas des particules d'or scintillantes */
+    #gold-canvas {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 1;
+      width: 100%;
+      height: 100%;
+    }
+
+    .app-container {
+      position: relative;
+      z-index: 2;
+      width: 100%;
+      max-width: 1240px;
+      margin: 0 auto;
+      padding: 0 20px;
+    }
+
+    /* ==========================================================================
+       TYPOGRAPHIE & COMPOSANTS RÉUTILISABLES
+       ========================================================================== */
+    h1, h2, h3, h4 {
+      font-family: var(--font-serif);
+      color: var(--text-main);
+      letter-spacing: -0.01em;
+    }
+
+    .badge-gold {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(212, 175, 55, 0.12);
+      border: 1px solid var(--border-gold);
+      padding: 6px 16px;
+      border-radius: var(--radius-full);
+      color: var(--accent);
+      font-size: 0.78rem;
+      font-weight: 700;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      padding: 14px 30px;
+      font-family: var(--font-sans);
+      font-weight: 700;
+      font-size: 0.95rem;
+      border-radius: var(--radius-full);
+      cursor: pointer;
+      text-decoration: none;
+      border: none;
+      outline: none;
+      transition: all var(--transition-fast);
+      min-height: 48px; /* Accessibilité touch targets */
+    }
+
+    .btn-gold {
+      background: linear-gradient(135deg, #FFF3BF 0%, #D4AF37 50%, #B8860B 100%);
+      color: #090B10;
+      box-shadow: 0 4px 20px rgba(212, 175, 55, 0.35);
+    }
+
+    .btn-gold:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 30px rgba(212, 175, 55, 0.55);
+      background: linear-gradient(135deg, #FFFFFF 0%, #E5C358 50%, #C69214 100%);
+    }
+
+    .btn-outline {
+      background: rgba(255, 255, 255, 0.04);
+      color: #FFFFFF;
+      border: 1px solid var(--border-subtle);
+    }
+
+    .btn-outline:hover {
+      background: rgba(255, 255, 255, 0.1);
+      border-color: var(--border-gold);
+      color: var(--accent);
+    }
+
+    /* ==========================================================================
+       HEADER & NAVIGATION
+       ========================================================================== */
+    .site-header {
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      background: rgba(6, 8, 15, 0.82);
+      border-bottom: 1px solid var(--border-subtle);
+      transition: all var(--transition-fast);
+    }
+
+    .header-inner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      height: 76px;
+    }
+
+    /* Emblème abstrait sans verre : Sceau doré géométrique */
+    .brand-logo {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      text-decoration: none;
+      color: var(--text-main);
+    }
+
+    .brand-sigil {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background: radial-gradient(circle at 35% 35%, #FFF0BA 0%, #D4AF37 55%, #8B6508 100%);
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 0 16px rgba(212, 175, 55, 0.4);
+      flex-shrink: 0;
+    }
+
+    .brand-sigil::after {
+      content: '';
+      width: 26px;
+      height: 26px;
+      border-radius: 50%;
+      border: 1.5px dashed rgba(6, 8, 15, 0.8);
+    }
+
+    .brand-name {
+      font-family: var(--font-serif);
+      font-size: 1.25rem;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      background: linear-gradient(135deg, #FFF5D0 0%, #D4AF37 60%, #AA7C11 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      line-height: 1.1;
+    }
+
+    .brand-sub {
+      font-size: 0.6rem;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: #9EA5B9;
+      display: block;
+    }
+
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 28px;
+      list-style: none;
+    }
+
+    .nav-links a {
+      color: var(--text-muted);
+      text-decoration: none;
+      font-size: 0.9rem;
+      font-weight: 500;
+      transition: color var(--transition-fast);
+    }
+
+    .nav-links a:hover {
+      color: var(--accent);
+    }
+
+    @media (max-width: 860px) {
+      .nav-links {
+        display: none;
+      }
+    }
+
+    /* ==========================================================================
+       HERO PLEIN ÉCRAN
+       ========================================================================== */
+    .hero {
+      min-height: calc(100vh - 76px);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      padding: 60px 0 80px;
+      position: relative;
+    }
+
+    .hero-title {
+      font-size: clamp(2.4rem, 6.5vw, 4.8rem);
+      line-height: 1.12;
+      font-weight: 800;
+      margin: 20px 0 22px;
+      max-width: 900px;
+    }
+
+    .hero-title span.gold {
+      background: linear-gradient(135deg, #FFF4CE 0%, #D4AF37 50%, #F5CE66 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      font-style: italic;
+    }
+
+    .hero-sub {
+      font-size: clamp(1rem, 2.2vw, 1.25rem);
+      color: var(--text-muted);
+      max-width: 680px;
+      line-height: 1.7;
+      margin-bottom: 38px;
+    }
+
+    .hero-actions {
+      display: flex;
+      gap: 16px;
+      flex-wrap: wrap;
+      justify-content: center;
+      margin-bottom: 50px;
+    }
+
+    .hero-stats {
+      display: flex;
+      align-items: center;
+      gap: 36px;
+      flex-wrap: wrap;
+      justify-content: center;
+      padding: 16px 28px;
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-full);
+      backdrop-filter: blur(8px);
+    }
+
+    .stat-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 0.88rem;
+      color: var(--text-muted);
+    }
+
+    .stat-item strong {
+      color: var(--accent);
+      font-size: 1.05rem;
+    }
+
+    /* ==========================================================================
+       SECTION CARTE DES 35 COCKTAILS
+       ========================================================================== */
+    .section-cocktails {
+      padding: 90px 0;
+      position: relative;
+    }
+
+    .section-header {
+      text-align: center;
+      max-width: 720px;
+      margin: 0 auto 46px;
+    }
+
+    .section-title {
+      font-size: clamp(2.1rem, 4.5vw, 3.2rem);
+      margin: 14px 0 16px;
+    }
+
+    .section-desc {
+      color: var(--text-muted);
+      font-size: 1.05rem;
+      line-height: 1.65;
+    }
+
+    /* Barre d'outils de filtrage & recherche */
+    .cocktails-toolbar {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+      align-items: center;
+      margin-bottom: 40px;
+    }
+
+    .search-input-wrap {
+      width: 100%;
+      max-width: 520px;
+      position: relative;
+    }
+
+    .search-input {
+      width: 100%;
+      padding: 14px 24px 14px 48px;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-full);
+      color: #FFFFFF;
+      font-size: 0.95rem;
+      outline: none;
+      transition: all var(--transition-fast);
+      font-family: var(--font-sans);
+    }
+
+    .search-input:focus {
+      background: rgba(255, 255, 255, 0.08);
+      border-color: var(--border-gold);
+      box-shadow: 0 0 20px rgba(212, 175, 55, 0.2);
+    }
+
+    .search-icon-svg {
+      position: absolute;
+      left: 18px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--accent);
+      pointer-events: none;
+    }
+
+    .filters-wrap {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      justify-content: center;
+    }
+
+    .filter-chip {
+      padding: 8px 18px;
+      border-radius: var(--radius-full);
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid var(--border-subtle);
+      color: var(--text-muted);
+      font-size: 0.84rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all var(--transition-fast);
+      min-height: 40px;
+    }
+
+    .filter-chip:hover {
+      background: rgba(255, 255, 255, 0.08);
+      color: #FFFFFF;
+    }
+
+    .filter-chip.active {
+      background: var(--accent);
+      color: #080A10;
+      border-color: var(--accent);
+      font-weight: 700;
+      box-shadow: 0 0 16px rgba(212, 175, 55, 0.4);
+    }
+
+    /* Grille des cartes cocktails */
+    .cocktails-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+      gap: 26px;
+    }
+
+    /* Carte Cocktail sensorielle (sans verre) */
+    .cocktail-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-lg);
+      padding: 24px;
+      display: flex;
+      flex-direction: column;
+      position: relative;
+      overflow: hidden;
+      cursor: pointer;
+      backdrop-filter: blur(14px);
+      transition: all var(--transition-smooth);
+    }
+
+    .cocktail-card:hover, .cocktail-card.active {
+      transform: translateY(-6px);
+      border-color: var(--card-accent, var(--border-gold));
+      background: var(--bg-card-hover);
+      box-shadow: 0 16px 36px rgba(0, 0, 0, 0.5), 0 0 30px var(--card-glow, rgba(212, 175, 55, 0.15));
+    }
+
+    /* Onde liquide chromatique abstraite représentant la saveur */
+    .liquid-swatch {
+      width: 100%;
+      height: 130px;
+      border-radius: var(--radius-md);
+      margin-bottom: 20px;
+      position: relative;
+      overflow: hidden;
+      background: linear-gradient(135deg, var(--swatch-1), var(--swatch-2));
+      box-shadow: inset 0 0 30px rgba(0, 0, 0, 0.4);
+    }
+
+    /* Texture d'ondes liquides soyeuses en mouvement */
+    .liquid-wave {
+      position: absolute;
+      inset: -20px;
+      background: radial-gradient(circle at 30% 40%, rgba(255, 255, 255, 0.4) 0%, transparent 60%),
+                  radial-gradient(circle at 70% 60%, var(--swatch-accent) 0%, transparent 55%);
+      filter: blur(16px);
+      opacity: 0.75;
+      animation: pulseWave 6s infinite alternate ease-in-out;
+    }
+
+    @keyframes pulseWave {
+      0% { transform: scale(1) rotate(0deg); }
+      100% { transform: scale(1.15) rotate(8deg); }
+    }
+
+    .swatch-tag {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      background: rgba(6, 8, 15, 0.75);
+      backdrop-filter: blur(8px);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      padding: 4px 10px;
+      border-radius: var(--radius-full);
+      font-size: 0.72rem;
+      font-weight: 700;
+      color: #FFFFFF;
+      letter-spacing: 0.04em;
+    }
+
+    .cocktail-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 8px;
+      gap: 12px;
+    }
+
+    .cocktail-name {
+      font-family: var(--font-serif);
+      font-size: 1.35rem;
+      font-weight: 700;
+      color: #FFFFFF;
+      line-height: 1.25;
+    }
+
+    .cocktail-price {
+      font-size: 1.15rem;
+      font-weight: 800;
+      color: var(--accent);
+      white-space: nowrap;
+    }
+
+    .cocktail-tagline {
+      font-size: 0.86rem;
+      font-weight: 600;
+      color: var(--card-accent, var(--accent));
+      margin-bottom: 12px;
+      font-style: italic;
+    }
+
+    .cocktail-desc {
+      font-size: 0.88rem;
+      color: var(--text-muted);
+      line-height: 1.55;
+      margin-bottom: 18px;
+      flex-grow: 1;
+    }
+
+    .cocktail-ingredients {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-bottom: 20px;
+    }
+
+    .ingredient-tag {
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      padding: 3px 9px;
+      border-radius: var(--radius-full);
+      font-size: 0.74rem;
+      color: #D3D8E6;
+    }
+
+    .cocktail-card-btn {
+      width: 100%;
+      padding: 12px 18px;
+      background: rgba(212, 175, 55, 0.1);
+      border: 1px solid var(--border-gold);
+      color: #FFFFFF;
+      border-radius: var(--radius-full);
+      font-size: 0.88rem;
+      font-weight: 700;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      transition: all var(--transition-fast);
+      min-height: 44px;
+    }
+
+    .cocktail-card:hover .cocktail-card-btn {
+      background: var(--accent);
+      color: #080A10;
+      box-shadow: 0 4px 16px rgba(212, 175, 55, 0.4);
+    }
+
+    /* ==========================================================================
+       SECTION COMMENT ÇA MARCHE (3 ÉTAPES)
+       ========================================================================== */
+    .section-steps {
+      padding: 90px 0;
+      background: radial-gradient(circle at 50% 50%, rgba(212, 175, 55, 0.04) 0%, transparent 60%);
+      border-top: 1px solid var(--border-subtle);
+      border-bottom: 1px solid var(--border-subtle);
+    }
+
+    .steps-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 32px;
+      margin-top: 50px;
+    }
+
+    .step-card {
+      background: rgba(14, 18, 28, 0.6);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-lg);
+      padding: 36px 28px;
+      position: relative;
+      text-align: center;
+    }
+
+    .step-number {
+      width: 52px;
+      height: 52px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #FFF3BF 0%, #D4AF37 100%);
+      color: #090B10;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: var(--font-serif);
+      font-size: 1.5rem;
+      font-weight: 800;
+      margin: 0 auto 22px;
+      box-shadow: 0 0 20px rgba(212, 175, 55, 0.4);
+    }
+
+    .step-title {
+      font-size: 1.35rem;
+      margin-bottom: 12px;
+    }
+
+    .step-desc {
+      font-size: 0.92rem;
+      color: var(--text-muted);
+      line-height: 1.6;
+    }
+
+    /* ==========================================================================
+       SECTION PACKS & BAR ÉVÉNEMENTIEL
+       ========================================================================== */
+    .section-events {
+      padding: 100px 0;
+    }
+
+    .events-banner {
+      background: linear-gradient(135deg, rgba(22, 28, 44, 0.85) 0%, rgba(10, 13, 20, 0.95) 100%);
+      border: 1px solid var(--border-gold);
+      border-radius: var(--radius-lg);
+      padding: 50px 40px;
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
+      display: grid;
+      grid-template-columns: 1.4fr 1fr;
+      gap: 40px;
+      align-items: center;
+    }
+
+    @media (max-width: 860px) {
+      .events-banner {
+        grid-template-columns: 1fr;
+        padding: 34px 24px;
+        text-align: center;
+      }
+    }
+
+    .events-features {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      margin: 24px 0 32px;
+    }
+
+    .events-features li {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      color: #D8DDF0;
+      font-size: 0.95rem;
+    }
+
+    .feature-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--accent);
+      flex-shrink: 0;
+      box-shadow: 0 0 8px var(--accent);
+    }
+
+    /* ==========================================================================
+       PANNEAU DE COMMANDE INTERACTIF (DRAWER / MODAL)
+       ========================================================================== */
+    .order-drawer-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.75);
+      backdrop-filter: blur(8px);
+      z-index: 100;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.3s ease;
+    }
+
+    .order-drawer-backdrop.open {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .order-drawer {
+      position: fixed;
+      right: 0;
+      top: 0;
+      bottom: 0;
+      width: 100%;
+      max-width: 480px;
+      background: #0B0E17;
+      border-left: 1px solid var(--border-gold);
+      box-shadow: -10px 0 40px rgba(0, 0, 0, 0.7);
+      z-index: 101;
+      transform: translateX(100%);
+      transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+      display: flex;
+      flex-direction: column;
+      overflow-y: auto;
+      padding: 32px 24px;
+    }
+
+    .order-drawer-backdrop.open .order-drawer {
+      transform: translateX(0);
+    }
+
+    .drawer-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 28px;
+      padding-bottom: 16px;
+      border-bottom: 1px solid var(--border-subtle);
+    }
+
+    .drawer-title {
+      font-size: 1.5rem;
+    }
+
+    .drawer-close {
+      background: rgba(255, 255, 255, 0.08);
+      border: none;
+      color: #FFFFFF;
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.2rem;
+      transition: background var(--transition-fast);
+    }
+
+    .drawer-close:hover {
+      background: rgba(255, 255, 255, 0.2);
+    }
+
+    .form-group {
+      margin-bottom: 22px;
+    }
+
+    .form-label {
+      display: block;
+      font-size: 0.85rem;
+      font-weight: 700;
+      color: #D2D7E8;
+      margin-bottom: 8px;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+    }
+
+    .form-select, .form-input {
+      width: 100%;
+      padding: 14px 16px;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-md);
+      color: #FFFFFF;
+      font-size: 0.95rem;
+      font-family: var(--font-sans);
+      outline: none;
+      transition: border-color var(--transition-fast);
+    }
+
+    .form-select:focus, .form-input:focus {
+      border-color: var(--accent);
+      background: rgba(255, 255, 255, 0.08);
+    }
+
+    .form-select option {
+      background: #0B0E17;
+      color: #FFFFFF;
+    }
+
+    /* Sélecteur de quantité */
+    .quantity-control {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .qty-btn {
+      width: 44px;
+      height: 44px;
+      border-radius: var(--radius-md);
+      background: rgba(255, 255, 255, 0.07);
+      border: 1px solid var(--border-subtle);
+      color: #FFFFFF;
+      font-size: 1.4rem;
+      font-weight: 700;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all var(--transition-fast);
+    }
+
+    .qty-btn:hover {
+      background: var(--accent);
+      color: #090B10;
+    }
+
+    .qty-display {
+      font-size: 1.3rem;
+      font-weight: 800;
+      color: #FFFFFF;
+      min-width: 32px;
+      text-align: center;
+    }
+
+    /* Boîte récapitulative de commande */
+    .order-summary-box {
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid var(--border-gold);
+      border-radius: var(--radius-md);
+      padding: 20px;
+      margin: 24px 0;
+    }
+
+    .summary-row {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.9rem;
+      color: var(--text-muted);
+      margin-bottom: 10px;
+    }
+
+    .summary-row.free {
+      color: #34D399;
+      font-weight: 600;
+    }
+
+    .summary-row.total {
+      font-size: 1.25rem;
+      font-weight: 800;
+      color: #FFFFFF;
+      border-top: 1px dashed var(--border-subtle);
+      padding-top: 12px;
+      margin-top: 12px;
+      margin-bottom: 0;
+    }
+
+    .summary-row.total .price-highlight {
+      color: var(--accent);
+    }
+
+    /* Bouton FedaPay et message légal */
+    .btn-fedapay {
+      width: 100%;
+      padding: 16px;
+      background: linear-gradient(135deg, #00A859 0%, #008744 100%);
+      color: #FFFFFF;
+      font-size: 1.05rem;
+      font-weight: 800;
+      border-radius: var(--radius-full);
+      border: none;
+      cursor: pointer;
+      box-shadow: 0 4px 20px rgba(0, 168, 89, 0.35);
+      transition: all var(--transition-fast);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      text-decoration: none;
+      min-height: 52px;
+    }
+
+    .btn-fedapay:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 30px rgba(0, 168, 89, 0.55);
+      filter: brightness(1.1);
+    }
+
+    .fedapay-security-msg {
+      margin-top: 14px;
+      font-size: 0.82rem;
+      color: #9AA0B4;
+      text-align: center;
+      line-height: 1.5;
+    }
+
+    /* ==========================================================================
+       PIED DE PAGE (FOOTER)
+       ========================================================================== */
+    .site-footer {
+      border-top: 1px solid var(--border-subtle);
+      background: rgba(4, 5, 10, 0.95);
+      padding: 60px 0 30px;
+      margin-top: 60px;
+    }
+
+    .footer-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 36px;
+      margin-bottom: 40px;
+    }
+
+    .footer-title {
+      font-size: 1.15rem;
+      margin-bottom: 16px;
+      color: #FFFFFF;
+    }
+
+    .footer-text {
+      color: var(--text-muted);
+      font-size: 0.9rem;
+      line-height: 1.6;
+    }
+
+    .fedapay-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(0, 168, 89, 0.12);
+      border: 1px solid rgba(0, 168, 89, 0.3);
+      padding: 6px 14px;
+      border-radius: var(--radius-full);
+      color: #34D399;
+      font-size: 0.8rem;
+      font-weight: 700;
+      margin-top: 12px;
+    }
+
+    .footer-bottom {
+      border-top: 1px solid var(--border-subtle);
+      padding-top: 24px;
+      text-align: center;
+      color: var(--text-dim);
+      font-size: 0.84rem;
+    }
+
+    /* Accessibilité focus */
+    a:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible {
+      outline: 2px solid var(--accent);
+      outline-offset: 3px;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Halo liquide chromatique réactif -->
+  <div class="liquid-aura" id="liquid-aura" aria-hidden="true"></div>
+
+  <!-- Canvas des particules et éclats dorés -->
+  <canvas id="gold-canvas" aria-hidden="true"></canvas>
+
+  <div class="app-container">
+    <!-- En-tête -->
+    <header class="site-header">
+      <div class="header-inner">
+        <a href="#hero" class="brand-logo" aria-label="Cocktail House Accueil">
+          <div class="brand-sigil" aria-hidden="true"></div>
+          <div>
+            <span class="brand-name">COCKTAIL HOUSE</span>
+            <span class="brand-sub">Maison de Haute Mixologie</span>
+          </div>
+        </a>
+
+        <nav class="nav-links" aria-label="Navigation">
+          <a href="#cocktails">Nos 35 Cocktails</a>
+          <a href="#etapes">Comment ça marche</a>
+          <a href="#evenements">Bar Événementiel</a>
+        </nav>
+
+        <button type="button" class="btn btn-gold" id="open-order-btn" aria-label="Commander un cocktail">
+          <span>Commander</span>
+          <span style="font-size: 0.85em;">(200 F)</span>
+        </button>
+      </div>
+    </header>
+
+    <!-- Hero Plein Écran -->
+    <section class="hero" id="hero">
+      <div class="badge-gold">
+        <span>Artisanat Liquide & Livraison Scellée</span>
+      </div>
+
+      <h1 class="hero-title">
+        La Haute Mixologie <br>
+        <span class="gold">à Fleur de Sens.</span>
+      </h1>
+
+      <p class="hero-sub">
+        Ressentez l&apos;arôme avant même la première goutte. 35 nectars d&apos;auteur assemblés minute, doublement filtrés et livrés scellés à froid avec leurs sphères de glace pure pour une température de dégustation idéale.
+      </p>
+
+      <div class="hero-actions">
+        <button type="button" class="btn btn-gold" onclick="openOrderDrawer()">
+          Commander Maintenant (200 FCFA)
+        </button>
+        <a href="#cocktails" class="btn btn-outline">
+          Explorer la Carte des Saveurs ↓
+        </a>
+      </div>
+
+      <div class="hero-stats">
+        <div class="stat-item">
+          <strong>35</strong> Cocktails d&apos;Auteur
+        </div>
+        <div class="stat-item" style="color: var(--accent);">
+          •
+        </div>
+        <div class="stat-item">
+          <strong>200 FCFA</strong> Tarif Unique Privilégié
+        </div>
+        <div class="stat-item" style="color: var(--accent);">
+          •
+        </div>
+        <div class="stat-item">
+          <strong>Glace & Froid</strong> Offerts à la livraison
+        </div>
+      </div>
+    </section>
+
+    <!-- Carte des 35 Cocktails -->
+    <section class="section-cocktails" id="cocktails">
+      <div class="section-header">
+        <div class="badge-gold">
+          <span>Collection Intégrale</span>
+        </div>
+        <h2 class="section-title">Nuancier des 35 Créations</h2>
+        <p class="section-desc">
+          Survolez ou touchez chaque cocktail pour voir la page s&apos;imprégner de sa texture liquide et de son spectre chromatique. Tarif unique de 200 FCFA par création.
+        </p>
+      </div>
+
+      <!-- Barre d'outils (Recherche + Filtres de saveurs) -->
+      <div class="cocktails-toolbar">
+        <div class="search-input-wrap">
+          <svg class="search-icon-svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+            <circle cx="11" cy="11" r="8"></circle>
+            <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+          </svg>
+          <input
+            type="text"
+            id="search-input"
+            class="search-input"
+            placeholder="Rechercher par saveur, ingrédient (passion, café, fumé, basilic...)"
+            aria-label="Rechercher un cocktail"
+          >
+        </div>
+
+        <div class="filters-wrap" id="flavor-filters" role="tablist" aria-label="Univers de saveurs">
+          <!-- Injecté par JavaScript -->
+        </div>
+      </div>
+
+      <!-- Grille des 35 Cartes de cocktails -->
+      <div class="cocktails-grid" id="cocktails-grid" role="list">
+        <!-- Rendu dynamique par JS à partir du catalogue officiel -->
+      </div>
+    </section>
+
+    <!-- Comment ça marche (3 étapes) -->
+    <section class="section-steps" id="etapes">
+      <div class="section-header">
+        <div class="badge-gold">
+          <span>Processus Artisanal</span>
+        </div>
+        <h2 class="section-title">Comment Ça Marche ?</h2>
+        <p class="section-desc">
+          Trois étapes simples pour transformer votre salon ou votre terrasse en comptoir d&apos;exception.
+        </p>
+      </div>
+
+      <div class="steps-grid">
+        <div class="step-card">
+          <div class="step-number">1</div>
+          <h3 class="step-title">Je Choisis</h3>
+          <p class="step-desc">
+            Explorez notre nuancier de 35 recettes d&apos;auteur. Sélectionnez votre nectar au tarif unique de 200 FCFA.
+          </p>
+        </div>
+
+        <div class="step-card">
+          <div class="step-number">2</div>
+          <h3 class="step-title">Nous Préparons</h3>
+          <p class="step-desc">
+            Nos barmen mixologues élaborent vos élixirs minute avec des agrumes pressés et les scellent hermétiquement sous fraîcheur continue.
+          </p>
+        </div>
+
+        <div class="step-card">
+          <div class="step-number">3</div>
+          <h3 class="step-title">Nous Livrons</h3>
+          <p class="step-desc">
+            Acheminement express en caisson isotherme. Vos cocktails arrivent glacés avec glaçons purs offerts. Les frais de coursier sont réglés à réception.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Packs & Bar Événementiel -->
+    <section class="section-events" id="evenements">
+      <div class="events-banner">
+        <div>
+          <div class="badge-gold" style="margin-bottom: 14px;">
+            <span>Prestations & Privatisation</span>
+          </div>
+          <h2 style="font-size: clamp(1.8rem, 3.5vw, 2.5rem); margin-bottom: 12px;">
+            Packs & Bar Événementiel
+          </h2>
+          <p style="color: var(--text-muted); font-size: 0.98rem; line-height: 1.6;">
+            Sublimez vos mariages, anniversaires prestigieux, soirées d&apos;entreprise et réceptions privées avec notre bar mobile complet et nos barmen passionnés.
+          </p>
+          <ul class="events-features">
+            <li><span class="feature-dot"></span> Bar mobile haut de gamme habillé de bois et laiton</li>
+            <li><span class="feature-dot"></span> Équipe de barmen mixologues dédiés avec démonstrations de flair</li>
+            <li><span class="feature-dot"></span> Carte personnalisée selon le thème de votre célébration</li>
+          </ul>
+          <button type="button" class="btn btn-gold" onclick="openOrderDrawer('evenement')">
+            Demander un Devis Événementiel
+          </button>
+        </div>
+
+        <div style="background: rgba(0, 0, 0, 0.4); border: 1px solid var(--border-subtle); border-radius: var(--radius-md); padding: 28px; text-align: center;">
+          <div style="font-size: 2.8rem; font-family: var(--font-serif); color: var(--accent); font-weight: 800;">
+            100%
+          </div>
+          <div style="font-weight: 700; font-size: 1.1rem; margin-bottom: 8px;">Sur-Mesure & Clé en Main</div>
+          <p style="color: var(--text-muted); font-size: 0.88rem; line-height: 1.5;">
+            De la verrerie cristalline aux garnitures déshydratées maison, nous nous occupons de chaque détail gustatif et visuel.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Pied de Page (Footer) -->
+    <footer class="site-footer">
+      <div class="footer-grid">
+        <div>
+          <div class="brand-logo" style="margin-bottom: 14px;">
+            <div class="brand-sigil"></div>
+            <span class="brand-name">COCKTAIL HOUSE</span>
+          </div>
+          <p class="footer-text">
+            Maison artisanale de haute mixologie. Créateurs d&apos;émotions liquides, d&apos;expériences sensorielles et de livraisons soignées.
+          </p>
+          <div class="fedapay-badge">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+              <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+            </svg>
+            <span>Paiement sécurisé par FedaPay</span>
+          </div>
+        </div>
+
+        <div>
+          <h4 class="footer-title">Commandes & Réservations</h4>
+          <p class="footer-text">
+            Tarif unique : 200 FCFA par cocktail.<br>
+            Livraison express tous les jours de 16h à 02h.<br>
+            WhatsApp direct : +229 01 02 03 04
+          </p>
+        </div>
+
+        <div>
+          <h4 class="footer-title">Règlement & Garantie</h4>
+          <p class="footer-text">
+            Transactions chiffrées de bout en bout via la passerelle FedaPay. Frais de livraison réglés directement au coursier dès que le colis vous est livré.
+          </p>
+        </div>
+      </div>
+
+      <div class="footer-bottom">
+        &copy; 2026 Cocktail House. Tous droits réservés. Haute Mixologie Artisanale.
+      </div>
+    </footer>
+  </div>
+
+  <!-- PANNEAU DE COMMANDE INTERACTIF (DRAWER) -->
+  <div class="order-drawer-backdrop" id="order-drawer-backdrop">
+    <div class="order-drawer" role="dialog" aria-modal="true" aria-labelledby="drawer-title-id">
+      <div class="drawer-header">
+        <h3 class="drawer-title" id="drawer-title-id">Votre Commande</h3>
+        <button type="button" class="drawer-close" onclick="closeOrderDrawer()" aria-label="Fermer le panneau">✕</button>
+      </div>
+
+      <form id="order-form" onsubmit="handleOrderSubmit(event)">
+        <!-- Sélection du cocktail -->
+        <div class="form-group">
+          <label class="form-label" for="drawer-cocktail-select">Sélectionnez Votre Cocktail</label>
+          <select id="drawer-cocktail-select" class="form-select" onchange="updateDrawerCalculations()">
+            <!-- Rempli dynamiquement avec les 35 cocktails -->
+          </select>
+        </div>
+
+        <!-- Sélecteur de quantité -->
+        <div class="form-group">
+          <label class="form-label">Quantité de verres</label>
+          <div class="quantity-control">
+            <button type="button" class="qty-btn" onclick="adjustQty(-1)" aria-label="Diminuer la quantité">−</button>
+            <span class="qty-display" id="drawer-qty">1</span>
+            <button type="button" class="qty-btn" onclick="adjustQty(1)" aria-label="Augmenter la quantité">+</button>
+          </div>
+        </div>
+
+        <!-- Coordonnées client pour le coursier -->
+        <div class="form-group">
+          <label class="form-label" for="drawer-name">Votre Nom & Prénom</label>
+          <input type="text" id="drawer-name" class="form-input" placeholder="Ex: Armand Nougbologni" required>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="drawer-phone">Téléphone (Contact coursier)</label>
+          <input type="tel" id="drawer-phone" class="form-input" placeholder="Ex: +229 97 00 00 00" required>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="drawer-address">Adresse de Livraison Précise</label>
+          <input type="text" id="drawer-address" class="form-input" placeholder="Ex: Cotonou, Haie Vive, Rue 34" required>
+        </div>
+
+        <!-- Récapitulatif clair -->
+        <div class="order-summary-box">
+          <div class="summary-row">
+            <span>Prix unitaire du cocktail :</span>
+            <strong id="summary-unit-price">200 FCFA</strong>
+          </div>
+          <div class="summary-row free">
+            <span>Glaçons purs & Conditionnement froid :</span>
+            <span>OFFERT</span>
+          </div>
+          <div class="summary-row" style="font-size: 0.8rem; color: #8F95A8;">
+            <span>Frais de livraison :</span>
+            <span>Payés au coursier à la réception</span>
+          </div>
+          <div class="summary-row total">
+            <span>Total à régler :</span>
+            <span class="price-highlight" id="summary-total-price">200 FCFA</span>
+          </div>
+        </div>
+
+        <!-- Bouton FedaPay avec lien direct -->
+        <button type="submit" class="btn-fedapay" id="btn-pay-fedapay">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+            <rect x="2" y="5" width="20" height="14" rx="2"></rect>
+            <line x1="2" y1="10" x2="22" y2="10"></line>
+          </svg>
+          <span>Payer avec FedaPay</span>
+        </button>
+
+        <!-- Message de réassurance obligatoire -->
+        <p class="fedapay-security-msg">
+          Paiement sécurisé via FedaPay. Veuillez ne pas fermer cette page avant la confirmation de votre transaction.
+        </p>
+      </form>
+    </div>
+  </div>
+
+  <!-- ==========================================================================
+       LOGIQUE JAVASCRIPT : DONNÉES DES 35 COCKTAILS, COULEURS & PARTICULES
+       ========================================================================== -->
+  <script>
+    // 1. UNIQUE SOURCE DE CONTENU : LE CATALOGUE OFFICIEL DES 35 COCKTAILS
+    const COCKTAILS = [
+      {
+        id: "old-fashioned",
+        name: "Le Smoking Old Fashioned",
+        tagline: "Fumé & Boisé",
+        description: "Bourbon haut de gamme affiné, réduction de sirop d’érable au feu de bois, bitter aromatic et essence d’orange flammée.",
+        ingredients: ["Bourbon Réserve", "Sirop d’érable fumé", "Angostura Bitters", "Zeste d’orange flammé"],
+        price: 200,
+        currency: "FCFA",
+        category: "Signature"
+      },
+      {
+        id: "passion-velvet",
+        name: "Le Velvet Passion",
+        tagline: "Exotique & Onctueux",
+        description: "Vodka infusée à la vanille bourbon de Madagascar, coulis de maracuja frais, liqueur artisanale et son shot de Prosecco millésimé.",
+        ingredients: ["Vodka Vanille", "Fruits de la passion frais", "Liqueur de vanille", "Prosecco DOC"],
+        price: 200,
+        currency: "FCFA",
+        category: "Signature"
+      },
+      {
+        id: "gold-negroni",
+        name: "Le Negroni Solaire 24K",
+        tagline: "Amer & Complexe",
+        description: "Gin distillé aux baies sauvages, vermouth rouge carpano antico, Campari premium vieilli et feuille d’or comestible 24 carats.",
+        ingredients: ["Gin Baies Sauvages", "Campari Bitter", "Vermouth Rouge Réserve", "Feuille d’or 24K"],
+        price: 200,
+        currency: "FCFA",
+        category: "Signature"
+      },
+      {
+        id: "truffle-manhattan",
+        name: "Le Manhattan Noir Truffé",
+        tagline: "Gourmand & Puissant",
+        description: "Rye whiskey d’exception infusé aux éclats de truffe noire, vermouth doux de Chambéry et cerise amarena macérée.",
+        ingredients: ["Rye Whiskey", "Infusion truffe", "Vermouth doux", "Cerise Amarena"],
+        price: 200,
+        currency: "FCFA",
+        category: "Signature"
+      },
+      {
+        id: "spiced-black-pearl",
+        name: "La Perle Noire Épicée",
+        tagline: "Mystérieux & Chaud",
+        description: "Rhum brun vieux de Jamaïque, liqueur de piment d’Espelette, jus d’ananas rôti au charbon et mélasse de canne.",
+        ingredients: ["Rhum Jamaïcain", "Ananas braisé", "Liqueur piment", "Cannelle fumée"],
+        price: 200,
+        currency: "FCFA",
+        category: "Signature"
+      },
+      {
+        id: "matcha-clarified-milk",
+        name: "Le Nuage Matcha Clarifié",
+        tagline: "Soyeux & Lumineux",
+        description: "Milk punch clarifié au lait végétal, thé vert matcha cérémonial d’Uji, gin japonais Roku et zeste de yuzu confit.",
+        ingredients: ["Gin Roku", "Matcha Uji", "Clarification lait d’amande", "Yuzu frais"],
+        price: 200,
+        currency: "FCFA",
+        category: "Signature"
+      },
+      {
+        id: "royal-lavender-fizz",
+        name: "Le Royal Lavande Fizz",
+        tagline: "Floral & Aérien",
+        description: "Vodka bio infusée aux fleurs de lavande de Provence, liqueur de fleur de sureau Saint-Germain, citron et champagne brut.",
+        ingredients: ["Vodka artisanale", "Fleurs de lavande", "Liqueur sureau", "Champagne Brut"],
+        price: 200,
+        currency: "FCFA",
+        category: "Signature"
+      },
+      {
+        id: "espresso-imperial",
+        name: "L’Espresso Martini Impérial",
+        tagline: "Café & Onctueux",
+        description: "Double shot d’espresso d’Éthiopie extrait minute, vodka distillée sur mesure, liqueur de café maison et mousse soyeuse.",
+        ingredients: ["Vodka Premium", "Espresso Éthiopie", "Kahlúa artisanal", "Grains de café torréfiés"],
+        price: 200,
+        currency: "FCFA",
+        category: "Classique"
+      },
+      {
+        id: "moscow-mule-artisan",
+        name: "Le Moscow Mule de Cuivre",
+        tagline: "Épicé & Givré",
+        description: "Vodka distillée en alambic, bière de gingembre artisanale piquante, jus de lime bio et bâtonnet de gingembre confit dans sa timbale de cuivre.",
+        ingredients: ["Vodka de blé", "Ginger Beer artisanale", "Jus de lime frais", "Concombre"],
+        price: 200,
+        currency: "FCFA",
+        category: "Classique"
+      },
+      {
+        id: "dry-martini-olive",
+        name: "Le Dry Martini Cristal",
+        tagline: "Pur & Minéral",
+        description: "Gin d’exception glacé à cœur, trait de vermouth extra dry de Noilly Prat, zeste de citron jaune taillé et olives de Lucques.",
+        ingredients: ["London Dry Gin", "Vermouth Noilly Prat", "Olives vertes artisanales", "Zeste de citron"],
+        price: 200,
+        currency: "FCFA",
+        category: "Classique"
+      },
+      {
+        id: "classic-margarita-smoke",
+        name: "La Margarita Salée Fumée",
+        tagline: "Acidulé & Salin",
+        description: "Tequila 100% agave bleu infusée au mezcal artisanal, jus de lime pressé à la minute, Cointreau et sel noir volcanique d’Hawaï.",
+        ingredients: ["Tequila Reposado", "Mezcal Espadin", "Cointreau", "Sel noir d’Hawaï"],
+        price: 200,
+        currency: "FCFA",
+        category: "Classique"
+      },
+      {
+        id: "bourbon-sour-silk",
+        name: "Le Whiskey Sour Velours",
+        tagline: "Moelleux & Vif",
+        description: "Bourbon du Kentucky vieilli en fût brûlé, jus de citron jaune doux, sirop de canne pur et émulsion soyeuse.",
+        ingredients: ["Bourbon Kentucky", "Citron pressé", "Sirop de canne", "Angostura Bitter"],
+        price: 200,
+        currency: "FCFA",
+        category: "Classique"
+      },
+      {
+        id: "french-75-etoile",
+        name: "Le French 75 Diamant",
+        tagline: "Effervescent & Noble",
+        description: "Gin floral distillé aux baies de genièvre, jus de citron jaune frais, sucre de canne raffiné et Champagne Brut Réserve.",
+        ingredients: ["Gin d’artisan", "Champagne Brut", "Jus de citron jaune", "Zeste spiralé"],
+        price: 200,
+        currency: "FCFA",
+        category: "Classique"
+      },
+      {
+        id: "sidecar-heritage",
+        name: "Le Sidecar Héritage",
+        tagline: "Chaleureux & Agrume",
+        description: "Cognac VSOP vieilli en fûts de chêne français, triple sec artisanal de curaçao orange et jus de citron vert filtré.",
+        ingredients: ["Cognac VSOP", "Triple Sec curaçao", "Citron jaune bio", "Croûte de sucre fin"],
+        price: 200,
+        currency: "FCFA",
+        category: "Classique"
+      },
+      {
+        id: "basil-smash",
+        name: "L’Émeraude Basil Smash",
+        tagline: "Herbacé & Poivré",
+        description: "Feuilles de basilic grand vert pilées minute, gin artisanal infusé aux baies de genièvre sauvages et réduction de citron de Menton.",
+        ingredients: ["Gin artisanal", "Basilic frais du potager", "Citron de Menton", "Sirop simple"],
+        price: 200,
+        currency: "FCFA",
+        category: "Fraîcheur"
+      },
+      {
+        id: "cucumber-mint-cooler",
+        name: "Le Jardin de Concombre Givré",
+        tagline: "Minéral & Vivifiant",
+        description: "Gin botanique, rubans de concombre croquant, bouquets de menthe poivrée écrasée et eau tonique artisanale au romarin.",
+        ingredients: ["Gin Botanique", "Concombre frais", "Menthe poivrée", "Tonic romarin"],
+        price: 200,
+        currency: "FCFA",
+        category: "Fraîcheur"
+      },
+      {
+        id: "rose-grapefruit-spritz",
+        name: "Le Spritz Pamplemousse Rose",
+        tagline: "Pétillant & Zesté",
+        description: "Jus de pamplemousse rose de Corse pressé minute, liqueur d’orange amère, Prosecco supérieur et branche de thym frais.",
+        ingredients: ["Pamplemousse rose pressé", "Liqueur apéritive", "Prosecco Millésimé", "Thym sauvage"],
+        price: 200,
+        currency: "FCFA",
+        category: "Fraîcheur"
+      },
+      {
+        id: "green-apple-shiso",
+        name: "Le Frisson Pomme & Shiso",
+        tagline: "Croustillant & Végétal",
+        description: "Vodka de seigle polonaise, pur jus de pomme granny smith acidulée, feuilles de shiso pourpre et trait de verjus.",
+        ingredients: ["Vodka de seigle", "Pomme Granny Smith", "Feuilles de Shiso", "Verjus du Périgord"],
+        price: 200,
+        currency: "FCFA",
+        category: "Fraîcheur"
+      },
+      {
+        id: "ginger-lemongrass-fizz",
+        name: "Le Souffle Gingembre Citronnelle",
+        tagline: "Dynamique & Tonique",
+        description: "Rhum blanc agricole des Antilles, bâton de citronnelle fraîchement broyé, jus de gingembre corsé et soda pétillant.",
+        ingredients: ["Rhum agricole AOC", "Citronnelle fraîche", "Jus de gingembre", "Citron vert pressé"],
+        price: 200,
+        currency: "FCFA",
+        category: "Fraîcheur"
+      },
+      {
+        id: "thyme-lemon-collins",
+        name: "Le Collins Thym & Fleur de Sel",
+        tagline: "Méditerranéen & Zesté",
+        description: "Gin sec aromatisé aux herbes de garrigue, sirop de thym sauvage fait maison, jus de citron bio et pointe de fleur de sel.",
+        ingredients: ["Gin aux herbes", "Sirop de thym maison", "Citron de Sicile", "Fleur de sel"],
+        price: 200,
+        currency: "FCFA",
+        category: "Fraîcheur"
+      },
+      {
+        id: "white-peach-verveine",
+        name: "La Douceur Pêche & Verveine",
+        tagline: "Délicat & Fruité",
+        description: "Purée soyeuse de pêches blanches de vigne, infusion froide de feuilles de verveine odorante, vodka douce et bulles de Crémant.",
+        ingredients: ["Pêche blanche", "Verveine fraîche", "Vodka douce", "Crémant d’Alsace"],
+        price: 200,
+        currency: "FCFA",
+        category: "Fraîcheur"
+      },
+      {
+        id: "colada-caraibes",
+        name: "La Piña Colada d’Or Fumé",
+        tagline: "Crémeux & Ensoleillé",
+        description: "Rhum ambré agricole vieilli, crème de noix de coco pressée à froid, pur jus d’ananas rôti à la flamme et râpée de fève tonka.",
+        ingredients: ["Rhum vieux agricole", "Crème de coco fraîche", "Ananas rôti", "Fève tonka râpée"],
+        price: 200,
+        currency: "FCFA",
+        category: "Exotique"
+      },
+      {
+        id: "mai-tai-tahiti",
+        name: "Le Mai Tai Bourbon & Vanille",
+        tagline: "Tropical & Boisé",
+        description: "Duo de rhums de Martinique et Jamaïque, sirop d’orgeat artisanal aux amandes amères, jus de lime et gousse de vanille de Tahiti.",
+        ingredients: ["Rhum brun & blanc", "Sirop d’orgeat maison", "Curaçao d’orange", "Vanille de Tahiti"],
+        price: 200,
+        currency: "FCFA",
+        category: "Exotique"
+      },
+      {
+        id: "mango-chili-daiquiri",
+        name: "Le Daiquiri Mangue & Piment",
+        tagline: "Suave & Épicé",
+        description: "Rhum blanc pur jus de canne, mangue fraîchement cueillie mixée, trait de jus de lime et touche de piment oiseau infusé.",
+        ingredients: ["Rhum blanc de canne", "Mangue mûre", "Jus de lime", "Infusion piment doux"],
+        price: 200,
+        currency: "FCFA",
+        category: "Exotique"
+      },
+      {
+        id: "hibiscus-passion-punch",
+        name: "Le Punch Hibiscus Rubis",
+        tagline: "Acidulé & Floral",
+        description: "Décoction concentrée de fleurs d’hibiscus rouge karkadé, pulpe de fruits de la passion, rhum vieux et zeste de combawa.",
+        ingredients: ["Fleurs d’hibiscus", "Fruit de la passion", "Rhum ambré", "Zeste de combawa"],
+        price: 200,
+        currency: "FCFA",
+        category: "Exotique"
+      },
+      {
+        id: "lychee-ginger-bliss",
+        name: "La Caresse Litchi & Gingembre",
+        tagline: "Parfumé & Sensuel",
+        description: "Vodka cristalline, jus pur de litchis doux, liqueur de gingembre doux, jus de yuzu et perles d’eau de rose de Damas.",
+        ingredients: ["Vodka pur grain", "Jus de litchi", "Liqueur gingembre", "Eau de rose bio"],
+        price: 200,
+        currency: "FCFA",
+        category: "Exotique"
+      },
+      {
+        id: "coconut-curacao-lagoon",
+        name: "Le Lagon Bleu Coco Givré",
+        tagline: "Océanique & Velouté",
+        description: "Rhum blanc doux des îles, curaçao bleu d’agrumes amers, eau de coco fraîche naturelle et touche de citron vert pressé.",
+        ingredients: ["Rhum blanc doux", "Curaçao bleu", "Eau de coco fraîche", "Citron vert"],
+        price: 200,
+        currency: "FCFA",
+        category: "Exotique"
+      },
+      {
+        id: "guava-rosemary-escape",
+        name: "L’Échappée Goyave & Romarin",
+        tagline: "Velouté & Aromatique",
+        description: "Nectar onctueux de goyave rose tropicale, gin distillé aux baies sauvages, sirop de romarin cuit au chaudron et lime bio.",
+        ingredients: ["Nectar de goyave rose", "Gin d’artisan", "Sirop romarin maison", "Lime pressée"],
+        price: 200,
+        currency: "FCFA",
+        category: "Exotique"
+      },
+      {
+        id: "virgin-mojito-framboise",
+        name: "Le Mojito Rubis Framboise",
+        tagline: "0% Alcool — Acidulé & Vivant",
+        description: "Framboises sauvages fraîchement écrasées, bouquets de menthe marocaine, quartiers de lime, sirop d’agave et eau gazeuse vive.",
+        ingredients: ["Framboises fraîches", "Menthe marocaine", "Lime pressée", "Eau gazeuse pure"],
+        price: 200,
+        currency: "FCFA",
+        category: "Mocktail"
+      },
+      {
+        id: "passion-sparkling-mocktail",
+        name: "L’Éclat Passion & Fleurs de Sureau",
+        tagline: "0% Alcool — Exotique & Pétillant",
+        description: "Purée de fruits de la passion acidulée, sirop de fleurs de sureau sauvage, jus de pomme trouble pressée et tonique pétillant.",
+        ingredients: ["Fruits de la passion", "Fleurs de sureau", "Pomme trouble", "Tonic premium"],
+        price: 200,
+        currency: "FCFA",
+        category: "Mocktail"
+      },
+      {
+        id: "matcha-coco-latte-glace",
+        name: "Le Voile Matcha & Eau de Coco",
+        tagline: "0% Alcool — Végétal & Velouté",
+        description: "Poudre de thé vert matcha de cérémonie fouettée à froid, eau de coco fraîche des îles et crème d’amande bio texturée.",
+        ingredients: ["Matcha Uji de cérémonie", "Eau de coco fraîche", "Lait d’amande bio", "Sirop d’érable pur"],
+        price: 200,
+        currency: "FCFA",
+        category: "Mocktail"
+      },
+      {
+        id: "ginger-citrus-elixir",
+        name: "L’Élixir Citron & Gingembre",
+        tagline: "0% Alcool — Dynamique",
+        description: "Extraction à froid de gingembre pur, jus de pamplemousse jaune, zeste de citron vert et pointe de sirop d’agave biologique.",
+        ingredients: ["Gingembre pressé froid", "Pamplemousse jaune", "Sirop d’agave", "Eau minérale pétillante"],
+        price: 200,
+        currency: "FCFA",
+        category: "Mocktail"
+      },
+      {
+        id: "cucumber-aloe-detox",
+        name: "L’Oasis Concombre & Aloe Vera",
+        tagline: "0% Alcool — Zen & Purifiant",
+        description: "Jus de concombre frais pressé, pulpe d’aloe vera bienfaisante, jus de pomme douce et feuilles de menthe fraîches.",
+        ingredients: ["Concombre pressé", "Aloe vera bio", "Pomme douce", "Menthe fraîche"],
+        price: 200,
+        currency: "FCFA",
+        category: "Mocktail"
+      },
+      {
+        id: "hibiscus-mint-cooler",
+        name: "Le Bissap Frais Mentholé",
+        tagline: "0% Alcool — Tradition & Modernité",
+        description: "Infusion de calices d’hibiscus rouge bio, bouquets de menthe fraîche, vanille de Madagascar et glace pilée.",
+        ingredients: ["Fleurs d’hibiscus karkadé", "Menthe fraîche", "Vanille bourbon", "Glaçons purs"],
+        price: 200,
+        currency: "FCFA",
+        category: "Mocktail"
+      },
+      {
+        id: "tropical-mango-breeze",
+        name: "La Brise Mangue & Ananas",
+        tagline: "0% Alcool — Douceur Fruitière",
+        description: "Coulis de mangue velouté, jus d’ananas pressé à froid, jus de maracuja acidulé et copeaux de noix de coco grillée.",
+        ingredients: ["Mangue fraîche", "Ananas pressé", "Fruit de la passion", "Copeaux coco"],
+        price: 200,
+        currency: "FCFA",
+        category: "Mocktail"
+      }
+    ];
+
+    // 2. GÉNÉRATEUR AUTOMATIQUE D'AMBIANCE COLORIMÉTRIQUE & UNIVER DE SAVEUR
+    function getCocktailFlavorTheme(cocktail) {
+      const text = (cocktail.name + ' ' + cocktail.tagline + ' ' + cocktail.description + ' ' + cocktail.ingredients.join(' ')).toLowerCase();
+      
+      // Univers 1: Hibiscus / Rubis / Framboise / Baies
+      if (/hibiscus|bissap|framboise|cerise|grenade|rubis|amarena|baies sauvages/.test(text)) {
+        return {
+          universe: "Fruité & Rubis",
+          filterGroup: "fruite",
+          color1: "#7E082B",
+          color2: "#C2185B",
+          accent: "#FF4081",
+          glow: "rgba(224, 17, 95, 0.4)"
+        };
+      }
+      
+      // Univers 2: Café / Chocolat / Truffe / Sombre
+      if (/café|espresso|kahlúa|torréfié|truffe|manhattan noir/.test(text)) {
+        return {
+          universe: "Café & Torréfié",
+          filterGroup: "cafe",
+          color1: "#1C120C",
+          color2: "#4A2810",
+          accent: "#D4AF37",
+          glow: "rgba(212, 175, 55, 0.35)"
+        };
+      }
+
+      // Univers 3: Fumé / Boisé / Bourbon / Ambre / Cuivre
+      if (/fumé|boisé|bourbon|whiskey|érable|charbon|fût|cuivre/.test(text)) {
+        return {
+          universe: "Fumé & Boisé",
+          filterGroup: "fume",
+          color1: "#3D1700",
+          color2: "#873600",
+          accent: "#F59E0B",
+          glow: "rgba(245, 158, 11, 0.4)"
+        };
+      }
+
+      // Univers 4: Basilic / Matcha / Concombre / Végétal
+      if (/basilic|matcha|concombre|shiso|menthe|aloe|émeraude|végétal/.test(text)) {
+        return {
+          universe: "Frais & Émeraude",
+          filterGroup: "frais",
+          color1: "#062E1F",
+          color2: "#0D6E48",
+          accent: "#10B981",
+          glow: "rgba(16, 185, 129, 0.38)"
+        };
+      }
+
+      // Univers 5: Agrumes / Spritz / Pamplemousse / Yuzu / Solaire
+      if (/pamplemousse|orange|yuzu|citron|zesté|negroni|spritz|solaire/.test(text)) {
+        return {
+          universe: "Agrume & Solaire",
+          filterGroup: "agrume",
+          color1: "#6B2404",
+          color2: "#D9530F",
+          accent: "#F97316",
+          glow: "rgba(249, 115, 22, 0.4)"
+        };
+      }
+
+      // Univers 6: Passion / Mangue / Ananas / Exotique
+      if (/passion|mangue|ananas|colada|litchi|goyave|maracuja|exotique/.test(text)) {
+        return {
+          universe: "Exotique & Doré",
+          filterGroup: "exotique",
+          color1: "#5A3800",
+          color2: "#D97706",
+          accent: "#FBBF24",
+          glow: "rgba(251, 191, 36, 0.4)"
+        };
+      }
+
+      // Univers 7: Floral / Lavande / Sureau
+      if (/lavande|sureau|floral|rose|fleurs/.test(text)) {
+        return {
+          universe: "Floral & Améthyste",
+          filterGroup: "floral",
+          color1: "#2B1055",
+          color2: "#6B21A8",
+          accent: "#A855F7",
+          glow: "rgba(168, 85, 247, 0.4)"
+        };
+      }
+
+      // Univers 8: Gingembre / Piment / Épicé
+      if (/gingembre|piment|épicé|mule|tonique/.test(text)) {
+        return {
+          universe: "Épicé & Vibrant",
+          filterGroup: "epice",
+          color1: "#431407",
+          color2: "#9A3412",
+          accent: "#FB923C",
+          glow: "rgba(251, 146, 60, 0.4)"
+        };
+      }
+
+      // Univers 9: Lagon / Cyan / Cristal
+      if (/lagon|bleu|curaçao|cristal|glacé/.test(text)) {
+        return {
+          universe: "Azur & Cristal",
+          filterGroup: "frais",
+          color1: "#032B44",
+          color2: "#0284C7",
+          accent: "#38BDF8",
+          glow: "rgba(56, 189, 248, 0.4)"
+        };
+      }
+
+      // Par défaut : Or impérial
+      return {
+        universe: "Or Impérial",
+        filterGroup: "tous",
+        color1: "#2B1F04",
+        color2: "#78530B",
+        accent: "#E5C358",
+        glow: "rgba(229, 195, 88, 0.35)"
+      };
+    }
+
+    // 3. RENDU DES FILTRES ET DES CARTES
+    const FLAVOR_FILTERS = [
+      { id: "tous", label: "Tous (35)" },
+      { id: "fruite", label: "Fruité & Rubis" },
+      { id: "frais", label: "Frais & Émeraude" },
+      { id: "fume", label: "Fumé & Boisé" },
+      { id: "cafe", label: "Café & Torréfié" },
+      { id: "agrume", label: "Agrumes & Solaire" },
+      { id: "exotique", label: "Exotique & Doré" },
+      { id: "epice", label: "Épicé & Chaud" },
+      { id: "floral", label: "Floral & Améthyste" }
+    ];
+
+    let currentFilter = "tous";
+    let currentSearch = "";
+    let activeCocktail = null;
+
+    function renderFilters() {
+      const container = document.getElementById("flavor-filters");
+      container.innerHTML = FLAVOR_FILTERS.map(f => `
+        <button
+          type="button"
+          class="filter-chip ${f.id === currentFilter ? 'active' : ''}"
+          onclick="setFilter('${f.id}')"
+          role="tab"
+          aria-selected="${f.id === currentFilter}"
+        >
+          ${f.label}
+        </button>
+      `).join("");
+    }
+
+    function setFilter(filterId) {
+      currentFilter = filterId;
+      renderFilters();
+      renderCocktails();
+    }
+
+    function renderCocktails() {
+      const grid = document.getElementById("cocktails-grid");
+      const searchClean = currentSearch.toLowerCase().trim();
+
+      const filtered = COCKTAILS.filter(c => {
+        const theme = getCocktailFlavorTheme(c);
+        const matchesFilter = currentFilter === "tous" || theme.filterGroup === currentFilter;
+        
+        const fullText = (c.name + " " + c.tagline + " " + c.description + " " + c.ingredients.join(" ")).toLowerCase();
+        const matchesSearch = !searchClean || fullText.includes(searchClean);
+
+        return matchesFilter && matchesSearch;
+      });
+
+      if (filtered.length === 0) {
+        grid.innerHTML = `
+          <div style="grid-column: 1 / -1; text-align: center; padding: 60px 20px; color: var(--text-muted);">
+            <p style="font-size: 1.1rem; margin-bottom: 12px;">Aucun nectar ne correspond à votre recherche "${currentSearch}".</p>
+            <button type="button" class="btn btn-outline" onclick="resetFilters()">Réinitialiser les filtres</button>
+          </div>
+        `;
+        return;
+      }
+
+      grid.innerHTML = filtered.map(c => {
+        const theme = getCocktailFlavorTheme(c);
+        return `
+          <article
+            class="cocktail-card ${activeCocktail === c.id ? 'active' : ''}"
+            id="card-${c.id}"
+            style="--card-accent: ${theme.accent}; --card-glow: ${theme.glow};"
+            onmouseenter="applyCocktailTheme('${c.id}')"
+            onclick="selectCocktail('${c.id}')"
+            tabindex="0"
+            role="listitem"
+            aria-label="${c.name}, ${c.tagline}, ${c.price} ${c.currency}"
+          >
+            <!-- Onde liquide chromatique (sans verre) -->
+            <div
+              class="liquid-swatch"
+              style="--swatch-1: ${theme.color1}; --swatch-2: ${theme.color2}; --swatch-accent: ${theme.accent};"
+            >
+              <div class="liquid-wave"></div>
+              <span class="swatch-tag">${theme.universe}</span>
+            </div>
+
+            <div class="cocktail-header">
+              <h3 class="cocktail-name">${c.name}</h3>
+              <div class="cocktail-price">${c.price} ${c.currency}</div>
+            </div>
+
+            <div class="cocktail-tagline">« ${c.tagline} »</div>
+
+            <p class="cocktail-desc">${c.description}</p>
+
+            <div class="cocktail-ingredients">
+              ${c.ingredients.map(ing => `<span class="ingredient-tag">${ing}</span>`).join("")}
+            </div>
+
+            <button
+              type="button"
+              class="cocktail-card-btn"
+              onclick="event.stopPropagation(); openOrderDrawer('${c.id}')"
+              aria-label="Choisir et commander ${c.name}"
+            >
+              <span>Choisir ce cocktail</span>
+              <span>→</span>
+            </button>
+          </article>
+        `;
+      }).join("");
+    }
+
+    function resetFilters() {
+      currentFilter = "tous";
+      currentSearch = "";
+      document.getElementById("search-input").value = "";
+      renderFilters();
+      renderCocktails();
+    }
+
+    // 4. ANIMATION & AMBIANCE DU FOND AU SURVOL / SÉLECTION
+    function applyCocktailTheme(cocktailId) {
+      const cocktail = COCKTAILS.find(c => c.id === cocktailId);
+      if (!cocktail) return;
+
+      const theme = getCocktailFlavorTheme(cocktail);
+      const root = document.documentElement;
+
+      // Met à jour les variables CSS pour les dégradés fluides
+      root.style.setProperty("--glow-1", theme.color1);
+      root.style.setProperty("--glow-2", theme.color2);
+      root.style.setProperty("--glow-3", theme.color1);
+      root.style.setProperty("--accent", theme.accent);
+
+      // Augmente l'excitation des particules d'or vers ce point
+      burstGoldDust();
+    }
+
+    function selectCocktail(cocktailId) {
+      activeCocktail = cocktailId;
+      applyCocktailTheme(cocktailId);
+      
+      document.querySelectorAll(".cocktail-card").forEach(c => c.classList.remove("active"));
+      const card = document.getElementById(`card-${cocktailId}`);
+      if (card) card.classList.add("active");
+    }
+
+    // Recherche en temps réel
+    document.getElementById("search-input").addEventListener("input", (e) => {
+      currentSearch = e.target.value;
+      renderCocktails();
+    });
+
+    // Suivi doux du curseur pour l'effet liquide d'aura
+    window.addEventListener("pointermove", (e) => {
+      const xPercent = (e.clientX / window.innerWidth) * 100;
+      const yPercent = (e.clientY / window.innerHeight) * 100;
+      document.documentElement.style.setProperty("--aura-x", `${xPercent}%`);
+      document.documentElement.style.setProperty("--aura-y", `${yPercent}%`);
+    });
+
+    // 5. MOTEUR CANVAS DE PARTICULES ET ÉCLATS DORÉS SCINTILLANTS
+    const canvas = document.getElementById("gold-canvas");
+    const ctx = canvas.getContext("2d");
+    let particles = [];
+    const PARTICLE_COUNT = 65;
+
+    function resizeCanvas() {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+    }
+    window.addEventListener("resize", resizeCanvas);
+    resizeCanvas();
+
+    class GoldParticle {
+      constructor() {
+        this.reset();
+      }
+
+      reset() {
+        this.x = Math.random() * canvas.width;
+        this.y = Math.random() * canvas.height;
+        this.size = Math.random() * 2.2 + 0.6;
+        this.speedY = -(Math.random() * 0.4 + 0.1);
+        this.speedX = (Math.random() - 0.5) * 0.3;
+        this.alpha = Math.random() * 0.7 + 0.2;
+        this.twinkleSpeed = Math.random() * 0.03 + 0.01;
+        this.twinklePhase = Math.random() * Math.PI * 2;
+      }
+
+      update() {
+        this.y += this.speedY;
+        this.x += this.speedX;
+        this.twinklePhase += this.twinkleSpeed;
+
+        if (this.y < -10) this.y = canvas.height + 10;
+        if (this.x < -10) this.x = canvas.width + 10;
+        if (this.x > canvas.width + 10) this.x = -10;
+      }
+
+      draw() {
+        const twinkleAlpha = Math.max(0.1, this.alpha + Math.sin(this.twinklePhase) * 0.3);
+        ctx.save();
+        ctx.fillStyle = `rgba(229, 195, 88, ${twinkleAlpha})`;
+        ctx.shadowColor = "rgba(255, 240, 180, 0.7)";
+        ctx.shadowBlur = this.size * 3;
+        ctx.beginPath();
+        ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.restore();
+      }
+    }
+
+    for (let i = 0; i < PARTICLE_COUNT; i++) {
+      particles.push(new GoldParticle());
+    }
+
+    function burstGoldDust() {
+      particles.forEach(p => {
+        p.alpha = Math.min(1, p.alpha + 0.25);
+        p.twinkleSpeed += 0.02;
+      });
+    }
+
+    function animateGoldParticles() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      particles.forEach(p => {
+        p.update();
+        p.draw();
+      });
+      requestAnimationFrame(animateGoldParticles);
+    }
+    animateGoldParticles();
+
+    // 6. GESTION DU PANNEAU DE COMMANDE & INTÉGRATION FEDAPAY
+    const FEDAPAY_LINK = "https://me.fedapay.com/MjEZRb7k";
+    let orderQuantity = 1;
+
+    function populateDrawerSelect() {
+      const select = document.getElementById("drawer-cocktail-select");
+      select.innerHTML = COCKTAILS.map(c => `
+        <option value="${c.id}">${c.name} — ${c.tagline} (200 FCFA)</option>
+      `).join("");
+    }
+
+    function openOrderDrawer(preferredCocktailId) {
+      populateDrawerSelect();
+      if (preferredCocktailId && preferredCocktailId !== 'evenement') {
+        const select = document.getElementById("drawer-cocktail-select");
+        select.value = preferredCocktailId;
+      }
+      orderQuantity = 1;
+      updateDrawerCalculations();
+      document.getElementById("order-drawer-backdrop").classList.add("open");
+    }
+
+    function closeOrderDrawer() {
+      document.getElementById("order-drawer-backdrop").classList.remove("open");
+    }
+
+    document.getElementById("order-drawer-backdrop").addEventListener("click", (e) => {
+      if (e.target.id === "order-drawer-backdrop") closeOrderDrawer();
+    });
+
+    document.getElementById("open-order-btn").addEventListener("click", () => openOrderDrawer());
+
+    function adjustQty(delta) {
+      orderQuantity = Math.max(1, orderQuantity + delta);
+      updateDrawerCalculations();
+    }
+
+    function updateDrawerCalculations() {
+      const qtyElem = document.getElementById("drawer-qty");
+      const unitPriceElem = document.getElementById("summary-unit-price");
+      const totalPriceElem = document.getElementById("summary-total-price");
+
+      qtyElem.textContent = orderQuantity;
+      unitPriceElem.textContent = "200 FCFA";
+      
+      const total = orderQuantity * 200;
+      totalPriceElem.textContent = `${total.toLocaleString("fr-FR")} FCFA`;
+    }
+
+    function handleOrderSubmit(e) {
+      e.preventDefault();
+      const select = document.getElementById("drawer-cocktail-select");
+      const cocktail = COCKTAILS.find(c => c.id === select.value) || COCKTAILS[0];
+      const name = document.getElementById("drawer-name").value;
+      const phone = document.getElementById("drawer-phone").value;
+      const address = document.getElementById("drawer-address").value;
+      const total = orderQuantity * 200;
+
+      // Sauvegarde locale de secours
+      try {
+        localStorage.setItem("cocktail_client_order", JSON.stringify({
+          cocktail: cocktail.name,
+          quantite: orderQuantity,
+          total: total,
+          client: { name, phone, address }
+        }));
+      } catch (err) {}
+
+      // Redirection transparente vers la passerelle de paiement FedaPay fournie
+      window.location.href = FEDAPAY_LINK;
+    }
+
+    // Initialisation au chargement du DOM
+    window.addEventListener("DOMContentLoaded", () => {
+      renderFilters();
+      renderCocktails();
+      populateDrawerSelect();
+      updateDrawerCalculations();
+    });
+  </script>
+</body>
+</html>
