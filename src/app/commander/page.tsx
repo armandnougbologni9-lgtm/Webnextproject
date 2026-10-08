@@ -15,12 +15,16 @@ import {
   MapPin,
   Users,
   Send,
-  CheckCircle2,
   AlertCircle,
   Hash,
+  CreditCard,
+  Truck,
+  ExternalLink,
 } from 'lucide-react';
 import { COCKTAILS, Cocktail } from '@/data/cocktails';
 import styles from './commander.module.css';
+
+const FEDAPAY_PAYMENT_URL = 'https://me.fedapay.com/MjEZRb7k';
 
 function CommanderContent() {
   const searchParams = useSearchParams();
@@ -45,7 +49,7 @@ function CommanderContent() {
   });
 
   // Quantité et calcul de prix
-  const [quantite, setQuantite] = useState<number>(2);
+  const [quantite, setQuantite] = useState<number>(1);
 
   // Formulaire Cocktails
   const [cocktailForm, setCocktailForm] = useState({
@@ -72,8 +76,7 @@ function CommanderContent() {
   });
 
   const [errors, setErrors] = useState<Record<string, string>>({});
-  const [isLoading, setIsLoading] = useState(false);
-  const [isSuccess, setIsSuccess] = useState(false);
+  const [isRedirecting, setIsRedirecting] = useState(false);
   const [todayString, setTodayString] = useState('');
 
   useEffect(() => {
@@ -130,7 +133,7 @@ function CommanderContent() {
       if (!eventForm.email.trim() || !eventForm.email.includes('@'))
         errs.email = 'Adresse email valide requise.';
       if (!eventForm.date) errs.date = 'Date de l’événement requise.';
-      if (!eventForm.ville.trim()) errs.ville = 'Ville ou code postal requis.';
+      if (!eventForm.ville.trim()) errs.ville = 'Ville ou commune requise.';
     }
     setErrors(errs);
     return Object.keys(errs).length === 0;
@@ -139,11 +142,33 @@ function CommanderContent() {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!validate()) return;
-    setIsLoading(true);
-    setTimeout(() => {
-      setIsLoading(false);
-      setIsSuccess(true);
-    }, 1000);
+
+    if (activeTab === 'cocktails') {
+      // Sauvegarder les détails de commande
+      if (typeof window !== 'undefined') {
+        sessionStorage.setItem(
+          'cocktail_order',
+          JSON.stringify({
+            cocktail: selectedCocktail.name,
+            quantite,
+            total: totalPrice,
+            client: cocktailForm,
+          })
+        );
+      }
+
+      setIsRedirecting(true);
+      // Redirection vers le lien FedaPay fourni
+      setTimeout(() => {
+        window.location.href = FEDAPAY_PAYMENT_URL;
+      }, 900);
+    } else {
+      // Pour les événements (demande de devis)
+      setIsRedirecting(true);
+      setTimeout(() => {
+        window.location.href = '/confirmation-livraison';
+      }, 900);
+    }
   };
 
   const totalPrice = selectedCocktail.price * quantite;
@@ -169,7 +194,7 @@ function CommanderContent() {
           </h1>
           <p className={styles.description}>
             {activeTab === 'cocktails'
-              ? 'Précisez votre sélection pour une préparation artisanale fraîche et livrée à température idéale.'
+              ? 'Sélectionnez vos cocktails artisanaux (tarif unique de 200 FCFA par verre), renseignez votre adresse puis procédez au règlement sécurisé via FedaPay.'
               : 'Privatisez un bar à cocktails et nos barmen mixologues pour votre réception privée, mariage ou gala.'}
           </p>
         </header>
@@ -181,13 +206,10 @@ function CommanderContent() {
             role="tab"
             aria-selected={activeTab === 'cocktails'}
             className={`${styles.tabBtn} ${activeTab === 'cocktails' ? styles.tabActive : ''}`}
-            onClick={() => {
-              setActiveTab('cocktails');
-              setIsSuccess(false);
-            }}
+            onClick={() => setActiveTab('cocktails')}
           >
             <Wine size={18} />
-            <span>Cocktails à l&apos;unité & Packs</span>
+            <span>Cocktails à l&apos;unité & Packs (200 FCFA)</span>
           </button>
 
           <button
@@ -195,49 +217,21 @@ function CommanderContent() {
             role="tab"
             aria-selected={activeTab === 'evenement'}
             className={`${styles.tabBtn} ${activeTab === 'evenement' ? styles.tabActive : ''}`}
-            onClick={() => {
-              setActiveTab('evenement');
-              setIsSuccess(false);
-            }}
+            onClick={() => setActiveTab('evenement')}
           >
             <Sparkles size={18} />
             <span>Bar pour Événement & Barmen Privés</span>
           </button>
         </div>
 
-        {isSuccess ? (
-          /* Confirmation personnalisée */
-          <div className={styles.successCard} role="status">
-            <div className={styles.successIcon}>
-              <CheckCircle2 size={40} />
-            </div>
-            <h2 className={styles.successTitle}>Votre demande a bien été envoyée !</h2>
-            <p className={styles.successDesc}>
-              {activeTab === 'cocktails' ? (
-                <>
-                  Merci <strong>{cocktailForm.nom}</strong>. Votre commande de{' '}
-                  <strong>{quantite}x {selectedCocktail.name}</strong> ({totalPrice} €) prévue le{' '}
-                  <strong>{cocktailForm.date}</strong> à <strong>{cocktailForm.adresse}</strong> a été enregistrée. Notre barman prendra contact sous 2h par SMS ou appel au {cocktailForm.telephone}.
-                </>
-              ) : (
-                <>
-                  Merci <strong>{eventForm.nom}</strong>. Votre demande de devis pour un événement le{' '}
-                  <strong>{eventForm.date}</strong> ({eventForm.nbInvites} convives à {eventForm.ville}) a été transmise à notre chef mixologue. Une proposition sur-mesure vous sera envoyée à <strong>{eventForm.email}</strong> sous 24h.
-                </>
-              )}
-            </p>
-            <Link href="/" className={styles.successAction}>
-              <span>Revenir à la carte des cocktails</span>
-            </Link>
-          </div>
-        ) : activeTab === 'cocktails' ? (
+        {activeTab === 'cocktails' ? (
           /* Mode Cocktails avec récapitulatif visuel */
           <div className={styles.orderLayout}>
             {/* Colonne Récapitulatif Visuel du Cocktail choisi */}
             <aside className={styles.summaryCard}>
               <div className={styles.summaryHeader}>
                 <h2 className={styles.summaryTitle}>Votre Sélection</h2>
-                <span className={styles.previewPrice}>{selectedCocktail.price} € / verre</span>
+                <span className={styles.previewPrice}>{selectedCocktail.price} FCFA / verre</span>
               </div>
 
               <div className={styles.selectedCocktailPreview}>
@@ -261,7 +255,7 @@ function CommanderContent() {
 
               {/* Sélecteur rapide d'autres cocktails */}
               <p style={{ fontSize: '0.85rem', fontWeight: 600, color: 'var(--color-text-main)', marginBottom: 10 }}>
-                Changer de cocktail :
+                Changer de cocktail (200 FCFA chacun) :
               </p>
               <div className={styles.cocktailSelectorGrid}>
                 {COCKTAILS.map((c) => (
@@ -272,7 +266,7 @@ function CommanderContent() {
                     className={`${styles.cocktailThumb} ${selectedCocktail.id === c.id ? styles.thumbSelected : ''}`}
                   >
                     <div className={styles.thumbName}>{c.name}</div>
-                    <div className={styles.thumbPrice}>{c.price} €</div>
+                    <div className={styles.thumbPrice}>{c.price} FCFA</div>
                   </button>
                 ))}
               </div>
@@ -281,20 +275,29 @@ function CommanderContent() {
               <div className={styles.pricingBreakdown}>
                 <div className={styles.pricingRow}>
                   <span>Prix unitaire</span>
-                  <span>{selectedCocktail.price} €</span>
+                  <span>{selectedCocktail.price} FCFA</span>
                 </div>
                 <div className={styles.pricingRow}>
                   <span>Quantité sélectionnée</span>
-                  <span>{quantite} verres</span>
+                  <span>{quantite} verre{quantite > 1 ? 's' : ''}</span>
                 </div>
                 <div className={styles.pricingRow}>
-                  <span>Frais de préparation & glace</span>
-                  <span style={{ color: '#10b981', fontWeight: 600 }}>Offerts</span>
+                  <span>Paiement en ligne</span>
+                  <span style={{ color: '#10b981', fontWeight: 700 }}>FedaPay Sécurisé</span>
+                </div>
+                <div className={styles.pricingRow}>
+                  <span>Frais de livraison</span>
+                  <span style={{ color: 'var(--color-primary)', fontWeight: 600 }}>Payés dès réception</span>
                 </div>
                 <div className={styles.totalRow}>
-                  <span>Total estimé</span>
-                  <span className={styles.totalPrice}>{totalPrice} €</span>
+                  <span>Total Cocktail</span>
+                  <span className={styles.totalPrice}>{totalPrice} FCFA</span>
                 </div>
+              </div>
+
+              {/* Note information livraison */}
+              <div style={{ marginTop: 20, padding: 14, background: 'rgba(255,255,255,0.03)', borderRadius: 10, border: '1px solid var(--color-border)', fontSize: '0.82rem', color: 'var(--color-text-muted)', lineHeight: 1.5 }}>
+                <strong style={{ color: 'var(--color-primary)' }}>📦 Information importante :</strong> Le paiement du cocktail ({totalPrice} FCFA) s&apos;effectue immédiatement par FedaPay. Les frais de livraison seront à régler directement au livreur dès la réception de votre colis.
               </div>
             </aside>
 
@@ -305,7 +308,7 @@ function CommanderContent() {
                   {/* Quantité */}
                   <div className={styles.fieldGroup}>
                     <label className={styles.label} htmlFor="quantite">
-                      Quantité de cocktails <span className={styles.requiredMark}>*</span>
+                      Nombre de cocktails <span className={styles.requiredMark}>*</span>
                     </label>
                     <div className={styles.inputWrapper}>
                       <Hash size={18} className={styles.inputIcon} />
@@ -367,7 +370,7 @@ function CommanderContent() {
                   {/* Téléphone */}
                   <div className={styles.fieldGroup}>
                     <label className={styles.label} htmlFor="telephone">
-                      Téléphone mobile <span className={styles.requiredMark}>*</span>
+                      Numéro de téléphone (pour livraison) <span className={styles.requiredMark}>*</span>
                     </label>
                     <div className={styles.inputWrapper}>
                       <Phone size={18} className={styles.inputIcon} />
@@ -377,7 +380,7 @@ function CommanderContent() {
                         name="telephone"
                         value={cocktailForm.telephone}
                         onChange={handleCocktailFormChange}
-                        placeholder="Ex: 06 12 34 56 78"
+                        placeholder="Ex: +229 97 00 00 00"
                         className={`${styles.input} ${errors.telephone ? styles.error : ''}`}
                         required
                       />
@@ -398,7 +401,7 @@ function CommanderContent() {
                         name="email"
                         value={cocktailForm.email}
                         onChange={handleCocktailFormChange}
-                        placeholder="armand@exemple.fr"
+                        placeholder="votre-email@exemple.com"
                         className={`${styles.input} ${errors.email ? styles.error : ''}`}
                         required
                       />
@@ -409,7 +412,7 @@ function CommanderContent() {
                   {/* Adresse */}
                   <div className={`${styles.fieldGroup} ${styles.fieldFull}`}>
                     <label className={styles.label} htmlFor="adresse">
-                      Adresse de livraison complète <span className={styles.requiredMark}>*</span>
+                      Adresse ou quartier de livraison <span className={styles.requiredMark}>*</span>
                     </label>
                     <div className={styles.inputWrapper}>
                       <MapPin size={18} className={styles.inputIcon} />
@@ -419,7 +422,7 @@ function CommanderContent() {
                         name="adresse"
                         value={cocktailForm.adresse}
                         onChange={handleCocktailFormChange}
-                        placeholder="Numéro, rue, code postal, ville"
+                        placeholder="Ex: Cotonou, Haie Vive, Rue 312 ou quartier..."
                         className={`${styles.input} ${errors.adresse ? styles.error : ''}`}
                         required
                       />
@@ -443,13 +446,14 @@ function CommanderContent() {
                   </div>
                 </div>
 
-                <button type="submit" className={styles.submitBtn} disabled={isLoading}>
-                  {isLoading ? (
-                    <span>Confirmation en cours...</span>
+                <button type="submit" className={styles.submitBtn} disabled={isRedirecting}>
+                  {isRedirecting ? (
+                    <span>Redirection vers FedaPay en cours...</span>
                   ) : (
                     <>
-                      <span>Confirmer ma commande ({totalPrice} €)</span>
-                      <Send size={18} />
+                      <CreditCard size={18} />
+                      <span>Payer {totalPrice} FCFA sur FedaPay</span>
+                      <ExternalLink size={16} />
                     </>
                   )}
                 </button>
@@ -535,7 +539,7 @@ function CommanderContent() {
                         name="ville"
                         value={eventForm.ville}
                         onChange={handleEventFormChange}
-                        placeholder="Ex: Paris 8ème, Versailles, Chantilly..."
+                        placeholder="Ex: Cotonou, Calavi, Ouidah..."
                         className={`${styles.input} ${errors.ville ? styles.error : ''}`}
                         required
                       />
@@ -575,7 +579,7 @@ function CommanderContent() {
                       name="entreprise"
                       value={eventForm.entreprise}
                       onChange={handleEventFormChange}
-                      placeholder="Ex: Agence Média SAS"
+                      placeholder="Ex: Agence Média SARL"
                       className={styles.input}
                     />
                   </div>
@@ -593,7 +597,7 @@ function CommanderContent() {
                         name="telephone"
                         value={eventForm.telephone}
                         onChange={handleEventFormChange}
-                        placeholder="Ex: 06 98 76 54 32"
+                        placeholder="Ex: +229 97 00 00 00"
                         className={`${styles.input} ${errors.telephone ? styles.error : ''}`}
                         required
                       />
@@ -614,7 +618,7 @@ function CommanderContent() {
                         name="email"
                         value={eventForm.email}
                         onChange={handleEventFormChange}
-                        placeholder="sophie@evenement.fr"
+                        placeholder="sophie@evenement.com"
                         className={`${styles.input} ${errors.email ? styles.error : ''}`}
                         required
                       />
@@ -638,12 +642,12 @@ function CommanderContent() {
                   </div>
                 </div>
 
-                <button type="submit" className={styles.submitBtn} disabled={isLoading}>
-                  {isLoading ? (
+                <button type="submit" className={styles.submitBtn} disabled={isRedirecting}>
+                  {isRedirecting ? (
                     <span>Génération de votre devis...</span>
                   ) : (
                     <>
-                      <span>Recevoir mon devis personnalisé sous 24h</span>
+                      <span>Recevoir mon devis personnalisé</span>
                       <Send size={18} />
                     </>
                   )}

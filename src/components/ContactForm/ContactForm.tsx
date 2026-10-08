@@ -295,7 +295,7 @@ export const ContactForm: React.FC = () => {
                     >
                       {COCKTAILS.map((c) => (
                         <option key={c.id} value={c.name}>
-                          {c.name} ({c.price} €)
+                          {c.name} ({c.price} FCFA)
                         </option>
                       ))}
                       <option value="Création personnalisée sur-mesure">

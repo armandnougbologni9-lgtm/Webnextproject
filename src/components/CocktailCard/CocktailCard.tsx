@@ -42,7 +42,7 @@ export const CocktailCard: React.FC<CocktailCardProps> = ({ cocktail, onSelect }
       <div className={styles.body}>
         <div className={styles.header}>
           <h3 className={styles.name}>{cocktail.name}</h3>
-          <span className={styles.price}>{cocktail.price} €</span>
+          <span className={styles.price}>{cocktail.price} FCFA</span>
         </div>
 
         <p className={styles.tagline}>{cocktail.tagline}</p>
@@ -62,7 +62,7 @@ export const CocktailCard: React.FC<CocktailCardProps> = ({ cocktail, onSelect }
         <Link
           href={`/commander?cocktail=${cocktail.id}`}
           className={styles.ctaButton}
-          aria-label={`Commander ${cocktail.name} pour ${cocktail.price} euros`}
+          aria-label={`Commander ${cocktail.name} pour ${cocktail.price} FCFA`}
         >
           <ShoppingBag size={17} />
           <span>Commander</span>
