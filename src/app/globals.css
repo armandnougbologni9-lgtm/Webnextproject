@@ -2478,6 +2478,435 @@ body {
   }
 }
 
+/* ══════════════════════════════════════════════════════
+   PAGE BARMEN & REZ-DE-CHAUSSÉE
+   ══════════════════════════════════════════════════════ */
+.barmen-page-main {
+  background: linear-gradient(180deg, #FFFFFF 0%, var(--color-bg-warm) 40%, #FFFFFF 100%);
+  min-height: 100vh;
+}
+
+.barmen-hero-section {
+  padding-top: clamp(60px, 8vw, 120px);
+  padding-bottom: clamp(60px, 8vw, 100px);
+  background: transparent;
+}
+
+.barmen-hero-intro {
+  max-width: 860px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.barmen-hero-title {
+  font-family: var(--font-serif);
+  font-size: clamp(2rem, 4.5vw, 3.8rem);
+  font-weight: 400;
+  color: var(--color-sea-dark);
+  line-height: 1.18;
+  letter-spacing: -0.015em;
+  margin-top: 12px;
+  margin-bottom: 20px;
+}
+
+.barmen-hero-lead {
+  font-family: var(--font-serif);
+  font-size: clamp(1.15rem, 2.2vw, 1.45rem);
+  font-style: italic;
+  color: var(--color-sea-blue);
+  line-height: 1.7;
+  margin-bottom: 24px;
+}
+
+.barmen-hero-subtext {
+  font-size: clamp(0.98rem, 1.8vw, 1.15rem);
+  color: var(--color-text-muted);
+  line-height: 1.85;
+  margin-bottom: var(--space-xl);
+}
+
+.barmen-pillars-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 28px;
+  width: 100%;
+  margin-top: var(--space-md);
+}
+
+.pillar-item {
+  background: rgba(255, 255, 255, 0.92);
+  border: 1px solid rgba(14, 116, 144, 0.12);
+  border-radius: 20px;
+  padding: 32px 24px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  box-shadow: 0 10px 30px -10px rgba(15, 23, 42, 0.05);
+  transition: all 400ms var(--ease-wave);
+}
+
+.pillar-item:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 16px 36px -10px rgba(14, 116, 144, 0.12);
+  border-color: rgba(14, 116, 144, 0.25);
+}
+
+.pillar-icon-box {
+  width: 54px;
+  height: 54px;
+  border-radius: 50%;
+  background: var(--color-sky-soft);
+  color: var(--color-sea-blue);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 18px;
+}
+
+.pillar-title {
+  font-family: var(--font-serif);
+  font-size: 1.15rem;
+  font-weight: 500;
+  color: var(--color-sea-dark);
+  margin-bottom: 10px;
+}
+
+.pillar-desc {
+  font-size: 0.92rem;
+  color: var(--color-text-muted);
+  line-height: 1.65;
+}
+
+/* ══════════════════════════════════════════════════════
+   LISTE DES BARMEN & SIGNATURES
+   ══════════════════════════════════════════════════════ */
+.barmen-list-section {
+  padding-top: var(--space-xl);
+  padding-bottom: var(--space-2xl);
+}
+
+.barmen-cards-stack {
+  display: flex;
+  flex-direction: column;
+  gap: clamp(60px, 8vw, 110px);
+  width: 100%;
+  max-width: 1140px;
+  margin: 0 auto;
+}
+
+.barman-presentation-card {
+  display: grid;
+  grid-template-columns: 1fr 1.15fr;
+  gap: clamp(36px, 5vw, 64px);
+  align-items: center;
+  background: rgba(255, 255, 255, 0.96);
+  border: 1px solid rgba(14, 116, 144, 0.12);
+  border-radius: 28px;
+  padding: clamp(28px, 4vw, 48px);
+  box-shadow: 0 20px 50px -15px rgba(15, 23, 42, 0.07);
+}
+
+.barman-presentation-card.card-reverse {
+  grid-template-columns: 1.15fr 1fr;
+}
+
+.barman-presentation-card.card-reverse .barman-photo-wrapper {
+  order: 2;
+}
+
+.barman-presentation-card.card-reverse .barman-content-wrapper {
+  order: 1;
+}
+
+/* PHOTO DU BARMAN SERVANT UN CLIENT */
+.barman-photo-wrapper {
+  position: relative;
+  width: 100%;
+}
+
+.barman-img-box {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  border-radius: 20px;
+  overflow: hidden;
+  box-shadow: 0 16px 36px -10px rgba(15, 23, 42, 0.12);
+  cursor: pointer;
+}
+
+.barman-photo {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 900ms var(--ease-wave);
+}
+
+.barman-img-box:hover .barman-photo {
+  transform: scale(1.04);
+}
+
+.barman-photo-tag {
+  position: absolute;
+  bottom: 14px;
+  left: 14px;
+  padding: 6px 14px;
+  background: rgba(255, 255, 255, 0.92);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border-radius: 9999px;
+  font-size: 0.76rem;
+  font-weight: 500;
+  color: var(--color-sea-dark);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+.barman-expand-badge {
+  position: absolute;
+  top: 14px;
+  right: 14px;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  background: rgba(15, 23, 42, 0.7);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  color: #FFFFFF;
+  border-radius: 9999px;
+  font-size: 0.74rem;
+  font-weight: 500;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  transition: all 300ms ease;
+}
+
+.barman-img-box:hover .barman-expand-badge {
+  background: rgba(14, 116, 144, 0.9);
+  transform: scale(1.06);
+}
+
+/* CONTENU & PHILOSOPHIE DU BARMAN */
+.barman-content-wrapper {
+  display: flex;
+  flex-direction: column;
+}
+
+.barman-header-meta {
+  margin-bottom: 16px;
+}
+
+.barman-role-pill {
+  display: inline-block;
+  padding: 4px 14px;
+  background: var(--color-sky-soft);
+  color: var(--color-sea-blue);
+  border-radius: 9999px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  margin-bottom: 10px;
+}
+
+.barman-name {
+  font-family: var(--font-serif);
+  font-size: clamp(1.8rem, 3.2vw, 2.5rem);
+  font-weight: 400;
+  color: var(--color-sea-dark);
+  line-height: 1.2;
+  margin-bottom: 6px;
+}
+
+.barman-tagline {
+  font-family: var(--font-serif);
+  font-size: 1.05rem;
+  font-style: italic;
+  color: var(--color-sand-gold);
+  line-height: 1.5;
+}
+
+.barman-description {
+  font-size: 0.98rem;
+  color: var(--color-text-muted);
+  line-height: 1.8;
+  margin-bottom: 24px;
+}
+
+/* BLOC DE SIGNATURE SOUS LA DESCRIPTION */
+.barman-signature-container {
+  padding-top: 20px;
+  border-top: 1px dashed rgba(14, 116, 144, 0.2);
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.signature-header-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.82rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--color-sand-gold);
+  font-weight: 600;
+}
+
+.gold-sparkle {
+  color: var(--color-sand-gold);
+}
+
+.signature-graphic-row {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.signature-svg-wrapper {
+  width: 170px;
+  height: 52px;
+  display: flex;
+  align-items: center;
+}
+
+.signature-svg {
+  width: 100%;
+  height: 100%;
+}
+
+.signature-name-text {
+  display: flex;
+  flex-direction: column;
+}
+
+.signer-name {
+  font-family: var(--font-serif);
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: var(--color-sea-dark);
+}
+
+.signer-title {
+  font-size: 0.78rem;
+  color: var(--color-text-muted);
+}
+
+/* CARTE DU COCKTAIL SIGNATURE DANS LE BLOC */
+.signature-cocktail-card {
+  background: var(--color-bg-warm);
+  border: 1px solid rgba(14, 116, 144, 0.12);
+  border-radius: 18px;
+  padding: 18px 22px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.sig-cocktail-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+}
+
+.sig-cocktail-tag {
+  font-size: 0.72rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--color-sand-gold);
+  font-weight: 600;
+  display: block;
+}
+
+.sig-cocktail-name {
+  font-family: var(--font-serif);
+  font-size: 1.15rem;
+  color: var(--color-sea-dark);
+  font-weight: 500;
+}
+
+.sig-cocktail-price {
+  font-family: var(--font-sans);
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: var(--color-sea-blue);
+}
+
+.sig-cocktail-desc {
+  font-size: 0.88rem;
+  color: var(--color-text-muted);
+  line-height: 1.6;
+}
+
+.sig-ingredients-pills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 2px;
+  margin-bottom: 6px;
+}
+
+.sig-pill {
+  padding: 3px 10px;
+  background: rgba(255, 255, 255, 0.85);
+  border: 1px solid rgba(14, 116, 144, 0.14);
+  border-radius: 9999px;
+  font-size: 0.74rem;
+  color: var(--color-sea-dark);
+}
+
+.btn-order-signature {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 10px 18px;
+  background: var(--color-sea-dark);
+  color: #FFFFFF;
+  border-radius: 9999px;
+  font-size: 0.85rem;
+  font-weight: 500;
+  text-decoration: none;
+  transition: all 300ms ease;
+  margin-top: 4px;
+}
+
+.btn-order-signature:hover {
+  background: var(--color-sea-blue);
+  transform: translateY(-2px);
+  color: #FFFFFF;
+}
+
+/* RESPONSIVE SMARTPHONE POUR LA PAGE BARMEN */
+@media (max-width: 900px) {
+  .barmen-pillars-grid {
+    grid-template-columns: 1fr;
+    gap: 18px;
+  }
+  .barman-presentation-card,
+  .barman-presentation-card.card-reverse {
+    grid-template-columns: 1fr;
+    gap: 24px;
+    padding: 24px 18px;
+  }
+  .barman-presentation-card.card-reverse .barman-photo-wrapper {
+    order: 1;
+  }
+  .barman-presentation-card.card-reverse .barman-content-wrapper {
+    order: 2;
+  }
+  .signature-graphic-row {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+  }
+  .btn-order-signature {
+    width: 100%;
+    box-sizing: border-box;
+    padding: 12px 18px;
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after {
     animation-duration: 0.01ms !important;
@@ -2486,3 +2915,4 @@ body {
     scroll-behavior: auto !important;
   }
 }
+

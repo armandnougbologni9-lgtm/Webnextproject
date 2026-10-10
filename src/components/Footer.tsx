@@ -36,8 +36,9 @@ export default function Footer() {
           <h4 className="footer-heading">Navigation</h4>
           <ul className="footer-links">
             <li><Link href="/" className="footer-link">Accueil</Link></li>
-            <li><Link href="/#notre-espace" className="footer-link">Notre espace au bord de l’eau</Link></li>
             <li><Link href="/cocktails" className="footer-link">Carte des cocktails (35 créations)</Link></li>
+            <li><Link href="/barmen" className="footer-link">Nos barmen & Signatures</Link></li>
+            <li><Link href="/#notre-espace" className="footer-link">Notre espace au bord de l’eau</Link></li>
             <li><Link href="/contact" className="footer-link">Contact & Commande</Link></li>
             <li><Link href="/contact?espace=pro" className="footer-link">Privatisation & Espace pro</Link></li>
           </ul>

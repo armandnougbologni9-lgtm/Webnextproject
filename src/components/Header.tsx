@@ -81,16 +81,22 @@ export default function Header() {
             Accueil
           </Link>
           <Link
-            href="/#notre-espace"
-            className="nav-link"
-          >
-            Notre espace
-          </Link>
-          <Link
             href="/cocktails"
             className={`nav-link ${pathname === '/cocktails' ? 'active' : ''}`}
           >
             Cocktails
+          </Link>
+          <Link
+            href="/barmen"
+            className={`nav-link ${pathname === '/barmen' ? 'active' : ''}`}
+          >
+            Nos Barmen
+          </Link>
+          <Link
+            href="/#notre-espace"
+            className="nav-link"
+          >
+            Notre espace
           </Link>
           <Link
             href="/contact"
@@ -127,11 +133,14 @@ export default function Header() {
               <Link href="/" className={`mobile-nav-link ${pathname === '/' ? 'active' : ''}`}>
                 Accueil
               </Link>
-              <Link href="/#notre-espace" className="mobile-nav-link">
-                Notre espace
-              </Link>
               <Link href="/cocktails" className={`mobile-nav-link ${pathname === '/cocktails' ? 'active' : ''}`}>
                 Cocktails (35 créations)
+              </Link>
+              <Link href="/barmen" className={`mobile-nav-link ${pathname === '/barmen' ? 'active' : ''}`}>
+                Nos Barmen & Signatures
+              </Link>
+              <Link href="/#notre-espace" className="mobile-nav-link">
+                Notre espace
               </Link>
               <Link href="/contact" className={`mobile-nav-link ${pathname === '/contact' ? 'active' : ''}`}>
                 Contact & Commande
