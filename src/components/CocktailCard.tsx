@@ -55,16 +55,18 @@ export default function CocktailCard({ cocktail, priority = false }: CocktailCar
           </div>
         </div>
 
-        {/* BOUTON COMMANDER */}
+        {/* BOUTON COMMANDER ET PAYER SUR FEDAPAY (OBLIGATOIRE) */}
         <div className="card-action">
-          <Link
-            href={`/contact?cocktail=${encodeURIComponent(cocktail.name)}`}
+          <a
+            href="https://me.fedapay.com/Cocktails"
+            target="_blank"
+            rel="noopener noreferrer"
             className="btn-order-cocktail"
-            aria-label={`Commander ${cocktail.name}`}
+            aria-label={`Commander et payer en ligne ${cocktail.name} sur FedaPay`}
           >
             <ShoppingBag size={16} />
-            <span>Commander ce cocktail</span>
-          </Link>
+            <span>Payer & Commander ({cocktail.price} {cocktail.currency})</span>
+          </a>
         </div>
       </div>
     </article>

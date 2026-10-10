@@ -15,7 +15,7 @@ export const SPACE_PHOTOS: SpacePhoto[] = [
     subtitle: 'Nos barmen en tenue décontractée',
     description: 'Au rez-de-chaussée, nos barmen vous accueillent en t-shirt avec le sourire, créant chaque cocktail avec minutie dans un calme absolu. L’étage supérieur demeure un havre discret, réservé à l’équipe qui veille au soin et à l’âme de notre maison.',
     alt: 'Barmen de Cóctel Bonerris en tenue décontractée préparant des cocktails au bord de l’océan dans une ambiance chaleureuse et sereine',
-    image: 'https://images.unsplash.com/photo-1574096079513-d8259312b785?auto=format&fit=crop&w=1600&q=85',
+    image: '/barmen/tiago-silva.jpg',
     tag: 'Rez-de-chaussée & Bar',
   },
   {

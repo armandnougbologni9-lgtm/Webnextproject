@@ -38,9 +38,10 @@ export default function Footer() {
             <li><Link href="/" className="footer-link">Accueil</Link></li>
             <li><Link href="/cocktails" className="footer-link">Carte des cocktails (35 créations)</Link></li>
             <li><Link href="/barmen" className="footer-link">Nos barmen & Signatures</Link></li>
+            <li><Link href="/entreprises" className="footer-link">Entreprises & Grands Événements</Link></li>
             <li><Link href="/#notre-espace" className="footer-link">Notre espace au bord de l’eau</Link></li>
-            <li><Link href="/contact" className="footer-link">Contact & Commande</Link></li>
-            <li><Link href="/contact?espace=pro" className="footer-link">Privatisation & Espace pro</Link></li>
+            <li><Link href="/contact" className="footer-link">Contact & Renseignements</Link></li>
+            <li><a href="https://me.fedapay.com/Cocktails" target="_blank" rel="noopener noreferrer" className="footer-link">Paiement FedaPay en ligne</a></li>
           </ul>
         </div>
 

@@ -160,13 +160,16 @@ export default function BarmanCard({ barman, index, onOpenPhoto }: BarmanCardPro
               ))}
             </div>
 
-            <Link
-              href={`/contact?cocktail=${encodeURIComponent(barman.signatureCocktail.name)}`}
+            <a
+              href="https://me.fedapay.com/Cocktails"
+              target="_blank"
+              rel="noopener noreferrer"
               className="btn-order-signature"
+              title={`Commander et payer en ligne ${barman.signatureCocktail.name} sur FedaPay`}
             >
               <ShoppingBag size={16} />
-              <span>Commander la création de {barman.name.split(' ')[0]}</span>
-            </Link>
+              <span>Commander & Payer sur FedaPay ({barman.signatureCocktail.price})</span>
+            </a>
           </div>
         </div>
       </div>

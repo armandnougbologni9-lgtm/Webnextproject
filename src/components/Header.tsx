@@ -93,6 +93,12 @@ export default function Header() {
             Nos Barmen
           </Link>
           <Link
+            href="/entreprises"
+            className={`nav-link ${pathname === '/entreprises' ? 'active' : ''}`}
+          >
+            Entreprises & Événements
+          </Link>
+          <Link
             href="/#notre-espace"
             className="nav-link"
           >
@@ -106,11 +112,17 @@ export default function Header() {
           </Link>
         </nav>
 
-        {/* ACTIONS HEADER */}
+        {/* ACTIONS HEADER : PAIEMENT FEDAPAY OBLIGATOIRE */}
         <div className="header-actions">
-          <Link href="/contact" className="btn-order-header">
-            Commander
-          </Link>
+          <a
+            href="https://me.fedapay.com/Cocktails"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="btn-order-header"
+            title="Commander et payer vos cocktails directement sur FedaPay"
+          >
+            Commander (FedaPay)
+          </a>
 
           {/* BOUTON MENU MOBILE OPTIMISÉ POUR SMARTPHONE */}
           <button
@@ -139,18 +151,26 @@ export default function Header() {
               <Link href="/barmen" className={`mobile-nav-link ${pathname === '/barmen' ? 'active' : ''}`}>
                 Nos Barmen & Signatures
               </Link>
+              <Link href="/entreprises" className={`mobile-nav-link ${pathname === '/entreprises' ? 'active' : ''}`}>
+                Entreprises & Événements
+              </Link>
               <Link href="/#notre-espace" className="mobile-nav-link">
                 Notre espace
               </Link>
               <Link href="/contact" className={`mobile-nav-link ${pathname === '/contact' ? 'active' : ''}`}>
-                Contact & Commande
+                Contact
               </Link>
             </nav>
 
             <div className="mobile-drawer-footer">
-              <Link href="/contact" className="btn-primary w-full text-center">
-                Commander maintenant
-              </Link>
+              <a
+                href="https://me.fedapay.com/Cocktails"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="btn-primary w-full text-center"
+              >
+                Payer un cocktail (FedaPay)
+              </a>
             </div>
           </div>
         </div>
