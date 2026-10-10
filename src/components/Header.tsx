@@ -2,9 +2,9 @@
 
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { usePathname } from 'next/navigation';
 import { Menu, X } from 'lucide-react';
-import SoundToggle from './SoundToggle';
 
 export default function Header() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -13,7 +13,7 @@ export default function Header() {
 
   useEffect(() => {
     const handleScroll = () => {
-      setScrolled(window.scrollY > 15);
+      setScrolled(window.scrollY > 10);
     };
     window.addEventListener('scroll', handleScroll, { passive: true });
     return () => window.removeEventListener('scroll', handleScroll);
@@ -35,16 +35,41 @@ export default function Header() {
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [mobileMenuOpen]);
 
+  // Empêcher le défilement du corps quand le menu mobile est ouvert
+  useEffect(() => {
+    if (mobileMenuOpen) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = '';
+    }
+    return () => {
+      document.body.style.overflow = '';
+    };
+  }, [mobileMenuOpen]);
+
   return (
     <header className={`site-header cloud-header ${scrolled ? 'header-scrolled' : ''}`}>
-      {/* Voeu de brume nuageuse en arrière-plan */}
       <div className="header-cloud-mist" aria-hidden="true" />
 
       <div className="container header-container">
-        {/* LOGO */}
+        {/* LOGO AVEC MONOGRAMME OFFICIEL CB */}
         <Link href="/" className="logo-link" aria-label="Cóctel Bonerris — Accueil">
-          <span className="logo-text">Cóctel Bonerris</span>
-          <span className="logo-sub">Lounge & Cocktails • Bord de Mer</span>
+          <div className="logo-brand-wrap">
+            <div className="logo-badge-icon">
+              <Image
+                src="/logo-cb.png"
+                alt="Logo Monogramme Cóctel Bonerris"
+                width={40}
+                height={40}
+                className="logo-img"
+                priority
+              />
+            </div>
+            <div className="logo-text-col">
+              <span className="logo-text">Cóctel Bonerris</span>
+              <span className="logo-sub">Lounge • Bord de Mer</span>
+            </div>
+          </div>
         </Link>
 
         {/* NAVIGATION DESKTOP */}
@@ -77,12 +102,11 @@ export default function Header() {
 
         {/* ACTIONS HEADER */}
         <div className="header-actions">
-          <SoundToggle />
           <Link href="/contact" className="btn-order-header">
             Commander
           </Link>
-          
-          {/* BOUTON MENU MOBILE */}
+
+          {/* BOUTON MENU MOBILE OPTIMISÉ POUR SMARTPHONE */}
           <button
             type="button"
             className="mobile-toggle-btn"
@@ -90,12 +114,12 @@ export default function Header() {
             aria-expanded={mobileMenuOpen}
             aria-label={mobileMenuOpen ? 'Fermer le menu' : 'Ouvrir le menu de navigation'}
           >
-            {mobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
+            {mobileMenuOpen ? <X size={22} /> : <Menu size={22} />}
           </button>
         </div>
       </div>
 
-      {/* TIROIR MOBILE NUAGEUX */}
+      {/* TIROIR MOBILE PLEIN ÉCRAN FLUIDE SANS DÉBORDEMENT */}
       {mobileMenuOpen && (
         <div className="mobile-drawer cloud-drawer" role="dialog" aria-modal="true" aria-label="Menu mobile">
           <div className="mobile-drawer-content">
@@ -107,7 +131,7 @@ export default function Header() {
                 Notre espace
               </Link>
               <Link href="/cocktails" className={`mobile-nav-link ${pathname === '/cocktails' ? 'active' : ''}`}>
-                Cocktails
+                Cocktails (35 créations)
               </Link>
               <Link href="/contact" className={`mobile-nav-link ${pathname === '/contact' ? 'active' : ''}`}>
                 Contact & Commande

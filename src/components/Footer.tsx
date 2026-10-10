@@ -1,5 +1,6 @@
 import React from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { MapPin, Phone, Mail } from 'lucide-react';
 
 export default function Footer() {
@@ -9,8 +10,21 @@ export default function Footer() {
         {/* COLONNE 1 : LOGO & PRÉSENTATION */}
         <div className="footer-col brand-col">
           <Link href="/" className="footer-logo">
-            <span className="logo-main">Cóctel Bonerris</span>
-            <span className="logo-sub">Lounge & Cocktails • Bord de Mer</span>
+            <div className="logo-brand-wrap">
+              <div className="logo-badge-icon">
+                <Image
+                  src="/logo-cb.png"
+                  alt="Logo Monogramme Cóctel Bonerris"
+                  width={44}
+                  height={44}
+                  className="logo-img"
+                />
+              </div>
+              <div className="logo-text-col">
+                <span className="logo-main">Cóctel Bonerris</span>
+                <span className="logo-sub">Lounge & Cocktails • Bord de Mer</span>
+              </div>
+            </div>
           </Link>
           <p className="footer-about text-readable">
             Une maison de mixologie artisanale face aux vagues. Nous cultivons la paix, la fraîcheur et la convivialité à travers des créations d’exception servies dans un esprit de pure sérénité.
