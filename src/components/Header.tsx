@@ -13,7 +13,7 @@ export default function Header() {
 
   useEffect(() => {
     const handleScroll = () => {
-      setScrolled(window.scrollY > 20);
+      setScrolled(window.scrollY > 15);
     };
     window.addEventListener('scroll', handleScroll, { passive: true });
     return () => window.removeEventListener('scroll', handleScroll);
@@ -36,7 +36,10 @@ export default function Header() {
   }, [mobileMenuOpen]);
 
   return (
-    <header className={`site-header ${scrolled ? 'header-scrolled' : ''}`}>
+    <header className={`site-header cloud-header ${scrolled ? 'header-scrolled' : ''}`}>
+      {/* Voeu de brume nuageuse en arrière-plan */}
+      <div className="header-cloud-mist" aria-hidden="true" />
+
       <div className="container header-container">
         {/* LOGO */}
         <Link href="/" className="logo-link" aria-label="Cóctel Bonerris — Accueil">
@@ -92,9 +95,9 @@ export default function Header() {
         </div>
       </div>
 
-      {/* TIROIR MOBILE */}
+      {/* TIROIR MOBILE NUAGEUX */}
       {mobileMenuOpen && (
-        <div className="mobile-drawer" role="dialog" aria-modal="true" aria-label="Menu mobile">
+        <div className="mobile-drawer cloud-drawer" role="dialog" aria-modal="true" aria-label="Menu mobile">
           <div className="mobile-drawer-content">
             <nav className="mobile-nav">
               <Link href="/" className={`mobile-nav-link ${pathname === '/' ? 'active' : ''}`}>
@@ -119,196 +122,6 @@ export default function Header() {
           </div>
         </div>
       )}
-
-      <style jsx>{`
-        .site-header {
-          position: sticky;
-          top: 0;
-          z-index: 100;
-          background-color: rgba(255, 255, 255, 0.94);
-          backdrop-filter: blur(14px);
-          -webkit-backdrop-filter: blur(14px);
-          border-bottom: 1px solid rgba(14, 116, 144, 0.08);
-          transition: all 400ms var(--ease-wave);
-          padding: 24px 0;
-        }
-
-        .header-scrolled {
-          padding: 16px 0;
-          background-color: rgba(255, 255, 255, 0.98);
-          box-shadow: 0 4px 20px rgba(15, 23, 42, 0.03);
-        }
-
-        .header-container {
-          display: flex;
-          align-items: center;
-          justify-content: space-between;
-          gap: 24px;
-        }
-
-        .logo-link {
-          display: flex;
-          flex-direction: column;
-          text-decoration: none;
-        }
-
-        .logo-text {
-          font-family: var(--font-serif);
-          font-size: 1.45rem;
-          font-weight: 500;
-          letter-spacing: -0.01em;
-          color: var(--color-sea-dark);
-          line-height: 1.1;
-        }
-
-        .logo-sub {
-          font-family: var(--font-sans);
-          font-size: 0.65rem;
-          letter-spacing: 0.16em;
-          text-transform: uppercase;
-          color: var(--color-sand-gold);
-          margin-top: 3px;
-        }
-
-        .desktop-nav {
-          display: flex;
-          align-items: center;
-          gap: 36px;
-        }
-
-        .nav-link {
-          font-family: var(--font-sans);
-          font-size: 0.92rem;
-          font-weight: 400;
-          color: var(--color-text-main);
-          text-decoration: none;
-          position: relative;
-          padding: 6px 0;
-          transition: color 300ms ease;
-        }
-
-        .nav-link:hover,
-        .nav-link.active {
-          color: var(--color-sea-blue);
-        }
-
-        .nav-link::after {
-          content: '';
-          position: absolute;
-          bottom: 0;
-          left: 50%;
-          transform: translateX(-50%);
-          width: 0;
-          height: 1.5px;
-          background-color: var(--color-sea-blue);
-          transition: width 350ms var(--ease-wave);
-        }
-
-        .nav-link:hover::after,
-        .nav-link.active::after {
-          width: 100%;
-        }
-
-        .header-actions {
-          display: flex;
-          align-items: center;
-          gap: 16px;
-        }
-
-        .btn-order-header {
-          display: inline-flex;
-          align-items: center;
-          justify-content: center;
-          padding: 10px 24px;
-          font-family: var(--font-sans);
-          font-size: 0.88rem;
-          font-weight: 500;
-          background-color: var(--color-sea-dark);
-          color: #FFFFFF;
-          border-radius: 9999px;
-          text-decoration: none;
-          transition: all 400ms var(--ease-wave);
-        }
-
-        .btn-order-header:hover {
-          background-color: var(--color-sea-blue);
-          transform: translateY(-1px);
-        }
-
-        .mobile-toggle-btn {
-          display: none;
-          background: transparent;
-          border: none;
-          color: var(--color-sea-dark);
-          cursor: pointer;
-          padding: 6px;
-        }
-
-        /* TIROIR MOBILE */
-        .mobile-drawer {
-          position: fixed;
-          top: 73px;
-          left: 0;
-          right: 0;
-          bottom: 0;
-          background-color: rgba(255, 255, 255, 0.98);
-          backdrop-filter: blur(20px);
-          z-index: 99;
-          display: flex;
-          flex-direction: column;
-          padding: 48px 32px;
-          animation: fadeIn 300ms ease;
-        }
-
-        @keyframes fadeIn {
-          from { opacity: 0; transform: translateY(-8px); }
-          to { opacity: 1; transform: translateY(0); }
-        }
-
-        .mobile-nav {
-          display: flex;
-          flex-direction: column;
-          gap: 28px;
-          align-items: center;
-          margin-top: 24px;
-        }
-
-        .mobile-nav-link {
-          font-family: var(--font-serif);
-          font-size: 1.6rem;
-          color: var(--color-sea-dark);
-          text-decoration: none;
-          transition: color 300ms ease;
-        }
-
-        .mobile-nav-link.active,
-        .mobile-nav-link:hover {
-          color: var(--color-sea-blue);
-        }
-
-        .mobile-drawer-footer {
-          margin-top: auto;
-          padding-top: 32px;
-          width: 100%;
-        }
-
-        .w-full {
-          width: 100%;
-        }
-
-        @media (max-width: 900px) {
-          .desktop-nav {
-            display: none;
-          }
-          .mobile-toggle-btn {
-            display: flex;
-            align-items: center;
-          }
-          .btn-order-header {
-            display: none;
-          }
-        }
-      `}</style>
     </header>
   );
 }

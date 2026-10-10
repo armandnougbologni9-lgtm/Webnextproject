@@ -10,17 +10,7 @@ export default function SoundToggle() {
   const isPlayingRef = useRef<boolean>(false);
   const oscillatorIntervalRef = useRef<number | null>(null);
 
-  // Charger la préférence utilisateur au montage (sans jamais autoplay)
   useEffect(() => {
-    try {
-      const saved = localStorage.getItem('coctel_bonerris_sound');
-      if (saved === 'active') {
-        // Préférence notée, mais selon la directive : JAMAIS de lecture automatique
-      }
-    } catch {
-      // Ignorer si localStorage n'est pas disponible
-    }
-
     return () => {
       stopWaves();
     };
@@ -57,12 +47,10 @@ export default function SoundToggle() {
       noiseSource.buffer = noiseBuffer;
       noiseSource.loop = true;
 
-      // Filtre passe-bas pour simuler le son feutré de l'eau
       const filter = ctx.createBiquadFilter();
       filter.type = 'lowpass';
       filter.frequency.setValueAtTime(320, ctx.currentTime);
 
-      // Nœud de gain principal (volume très doux)
       const masterGain = ctx.createGain();
       masterGain.gain.setValueAtTime(0.01, ctx.currentTime);
       gainNodeRef.current = masterGain;
@@ -72,16 +60,13 @@ export default function SoundToggle() {
       masterGain.connect(ctx.destination);
       noiseSource.start();
 
-      // Modulation cyclique douce (ressac des vagues toutes les 5.5 secondes)
       const waveCycleTime = 5500;
       const swell = () => {
         if (!isPlayingRef.current || !ctx || ctx.state === 'closed') return;
         const now = ctx.currentTime;
         masterGain.gain.cancelScheduledValues(now);
-        // Montée douce de la vague
         masterGain.gain.linearRampToValueAtTime(0.18, now + 2.5);
         filter.frequency.linearRampToValueAtTime(680, now + 2.5);
-        // Descente apaisante
         masterGain.gain.linearRampToValueAtTime(0.02, now + 5.2);
         filter.frequency.linearRampToValueAtTime(260, now + 5.2);
       };
@@ -134,7 +119,7 @@ export default function SoundToggle() {
     <button
       type="button"
       onClick={toggleSound}
-      className="sound-toggle-btn"
+      className={`sound-toggle-btn ${isPlaying ? 'sound-active' : ''}`}
       aria-pressed={isPlaying}
       aria-label={isPlaying ? 'Couper le son des vagues' : 'Activer le son des vagues'}
       title={isPlaying ? 'Couper le son des vagues' : 'Activer le son des vagues'}
@@ -145,43 +130,6 @@ export default function SoundToggle() {
       <span className="sound-text">
         {isPlaying ? 'Son des vagues actif' : 'Activer le son des vagues'}
       </span>
-
-      <style jsx>{`
-        .sound-toggle-btn {
-          display: inline-flex;
-          align-items: center;
-          gap: 10px;
-          background: transparent;
-          border: 1px solid rgba(14, 116, 144, 0.2);
-          border-radius: 9999px;
-          padding: 8px 18px;
-          font-family: var(--font-sans);
-          font-size: 0.82rem;
-          color: var(--color-sea-blue);
-          cursor: pointer;
-          transition: all 400ms var(--ease-wave);
-        }
-        .sound-toggle-btn:hover {
-          background-color: var(--color-sky-soft);
-          border-color: var(--color-sea-blue);
-        }
-        .sound-toggle-btn[aria-pressed='true'] {
-          background-color: var(--color-sky-soft);
-          border-color: var(--color-sea-blue);
-          color: var(--color-sea-blue);
-          box-shadow: 0 0 16px rgba(56, 189, 248, 0.2);
-        }
-        .sound-icon-wrap {
-          display: flex;
-          align-items: center;
-          justify-content: center;
-        }
-        @media (max-width: 640px) {
-          .sound-text {
-            font-size: 0.78rem;
-          }
-        }
-      `}</style>
     </button>
   );
 }
