@@ -9,20 +9,6 @@ const nextConfig = {
       },
     ],
   },
-  async rewrites() {
-    return {
-      beforeFiles: [
-        {
-          source: '/',
-          destination: '/index.html',
-        },
-        {
-          source: '/carte',
-          destination: '/carte.html',
-        },
-      ],
-    };
-  },
 };
 
 export default nextConfig;

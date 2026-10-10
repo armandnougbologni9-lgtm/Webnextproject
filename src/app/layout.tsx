@@ -2,9 +2,12 @@ import type { Metadata } from 'next';
 import './globals.css';
 
 export const metadata: Metadata = {
-  title: 'Cocktail House — Vente & Création de Cocktails d’Exception',
-  description: 'Découvrez nos cocktails artisanaux haut de gamme pour vos soirées, événements privés et livraisons gourmandes.',
-  keywords: ['cocktails', 'mixologie', 'bar à cocktail', 'commande cocktail', 'événement'],
+  title: 'Cóctel Bonerris — Bar & Créations de Cocktails au Bord de la Mer',
+  description: 'Maison de cocktails artisanaux au bord de l’océan. Paix, brise marine, légèreté et saveurs authentiques bercées par le chant des vagues.',
+  keywords: ['cocktails bord de mer', 'Cóctel Bonerris', 'bar à cocktails', 'mixologie', 'événement plage', 'lounge'],
+  icons: {
+    icon: '/favicon.ico',
+  },
 };
 
 export default function RootLayout({
@@ -14,6 +17,10 @@ export default function RootLayout({
 }) {
   return (
     <html lang="fr">
+      <head>
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
+      </head>
       <body>{children}</body>
     </html>
   );
